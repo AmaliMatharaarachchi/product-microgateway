@@ -668,7 +668,7 @@ public class SetupCmd implements GatewayLauncherCmd {
      */
     private String getBaseURLfromCmd() {
         String userInputURL;
-        userInputURL = promptForTextInput("Enter APIM base URL [" + baseURL + "]: ").trim();
+        userInputURL = promptForTextInput("Enter APIM base URL [" + RESTServiceConstants.DEFAULT_HOST + "]: ").trim();
         return userInputURL;
     }
 

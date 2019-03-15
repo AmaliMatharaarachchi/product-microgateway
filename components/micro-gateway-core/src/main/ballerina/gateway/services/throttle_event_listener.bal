@@ -84,7 +84,7 @@ GLOBAL_TM_EVENT_PUBLISH_ENABLED, false);
 
 if (enabledGlobalTMEventPublishing == true) {
 jms:TopicSubscriber temp = startSubscriberService();
-log:printError("subscriber service for global throttling is started");
+log:printInfo("subscriber service for global throttling is started");
 return true;
 }
 else {
