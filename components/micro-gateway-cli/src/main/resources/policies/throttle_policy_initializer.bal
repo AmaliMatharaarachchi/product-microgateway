@@ -5,30 +5,35 @@ import wso2/gateway;
 future<()> ftr = start initThrottlePolicies();
 
 function initThrottlePolicies() {
-    while (true) {
-        if(gateway:isStreamsInitialized == true) {
-            log:printDebug("Throttle streams initialized.");
-            break;
-        }
-    }
 
-    future<()> initApplication50PerMinPolicyFtr = start initApplication50PerMinPolicy();
+private boolean globalThrottlingEnabled=gateway:initiateThrottlingJmsListener();
 
-    future<()> initApplication20PerMinPolicyFtr = start initApplication20PerMinPolicy();
+if(!globalThrottlingEnabled){
+while (true) {
+if (gateway:isStreamsInitialized == true) {
+log:printDebug("Throttle streams initialized.");
+break;
+}
+}
 
-    future<()> initApplication10PerMinPolicyFtr = start initApplication10PerMinPolicy();
+future<()> initApplication50PerMinPolicyFtr = start initApplication50PerMinPolicy();
 
-    future<()> initSubscriptionGoldPolicyFtr = start initSubscriptionGoldPolicy();
+future<()> initApplication20PerMinPolicyFtr = start initApplication20PerMinPolicy();
 
-    future<()> initSubscriptionSilverPolicyFtr = start initSubscriptionSilverPolicy();
+future<()> initApplication10PerMinPolicyFtr = start initApplication10PerMinPolicy();
 
-    future<()> initSubscriptionBronzePolicyFtr = start initSubscriptionBronzePolicy();
+future<()> initSubscriptionGoldPolicyFtr = start initSubscriptionGoldPolicy();
 
-    future<()> initSubscriptionUnauthenticatedPolicyFtr = start initSubscriptionUnauthenticatedPolicy();
+future<()> initSubscriptionSilverPolicyFtr = start initSubscriptionSilverPolicy();
 
-    log:printDebug("Throttle policies initialized.");
+future<()> initSubscriptionBronzePolicyFtr = start initSubscriptionBronzePolicy();
+
+future<()> initSubscriptionUnauthenticatedPolicyFtr = start initSubscriptionUnauthenticatedPolicy();
+
+log:printDebug("Throttle policies initialized.");
+}
 }
 
 function getDeployedPolicies() returns map<boolean> {
-    return { "50PerMin":true,"20PerMin":true,"10PerMin":true,"Gold":true,"Silver":true,"Bronze":true,"Unauthenticated":true };
+return { "50PerMin":true,"20PerMin":true,"10PerMin":true,"Gold":true,"Silver":true,"Bronze":true,"Unauthenticated":true };
 }

@@ -17,6 +17,9 @@
  */
 package org.wso2.apimgt.gateway.cli.constants;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+
 public class RESTServiceConstants {
 
     public static final String ENDPOINT_TYPE = "endpoint_type";
@@ -37,11 +40,12 @@ public class RESTServiceConstants {
     public static final String API_GET_BY_NAME_VERSION_URI =
             "apis?query=name:" + GatewayCliConstants.API_NAME_PLACEHOLDER + "%20version:"
                     + GatewayCliConstants.VERSION_PLACEHOLDER + "%20status:PUBLISHED&expand=true";
-    public static final String PUB_RESOURCE_PATH = "/api/am/publisher/v0.14";
-    public static final String PUB_CLIENT_CERT_PATH = "/api/am/publisher/v0.14/clientCertificates";
-    public static final String ADMIN_RESOURCE_PATH = "/api/am/admin/v0.14";
-    public static final String DCR_RESOURCE_PATH = "/client-registration/v0.14/register";
-    public static final String TOKEN_PATH = "/oauth2/token";
+
+    public static final String CONFIG_REST_VERSION = "v0.14";
+    public static final String CONFIG_PUBLISHER_ENDPOINT = "{baseURL}/api/am/publisher/{restVersion}";
+    public static final String CONFIG_ADMIN_ENDPOINT = "{baseURL}/api/am/admin/{restVersion}";
+    public static final String CONFIG_REGISTRATION_ENDPOINT = "{baseURL}/client-registration/{restVersion}/register";
+    public static final String CONFIG_TOKEN_ENDPOINT = "{baseURL}/oauth2/token";
 
     public static final String DEFAULT_HOST = "https://localhost:9443/";
     public static final String DEFAULT_TRUSTSTORE_PATH = "lib/platform/bre/security/ballerinaTruststore.p12";
@@ -51,4 +55,5 @@ public class RESTServiceConstants {
 
     public static final String CERTIFICATE_ALIAS = "Alias";
     public static final String CERTIFICATE_TIER = "Tier";
+
 }

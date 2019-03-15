@@ -5,12 +5,16 @@ import wso2/gateway;
 future<()> ftr = start initThrottlePolicies();
 
 function initThrottlePolicies() {
-    while (true) {
-        if(gateway:isStreamsInitialized == true) {
-            log:printDebug("Throttle streams initialized.");
-            break;
-        }
-    }
+    boolean globalThrottlingEnabled=gateway:initiateThrottlingJmsListener();
+
+     if(!globalThrottlingEnabled){
+         while (true) {
+             if(gateway:isStreamsInitialized == true) {
+                            log:printDebug("Throttle streams initialized.");
+                            break;
+             }
+         }
+     }
 {{#policyInitNames}}
     future<()> {{.}}Ftr = start {{.}}();
 {{/policyInitNames}}

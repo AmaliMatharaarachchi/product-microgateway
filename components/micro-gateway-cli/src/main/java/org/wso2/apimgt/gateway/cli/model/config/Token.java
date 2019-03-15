@@ -23,6 +23,7 @@ import java.io.File;
 
 public class Token {
 
+    private String restVersion;
     private String publisherEndpoint;
     private String adminEndpoint;
     private String registrationEndpoint;
@@ -118,5 +119,13 @@ public class Token {
 
     public void setAdminEndpoint(String adminEndpoint) {
         this.adminEndpoint = adminEndpoint;
+    }
+
+    public String getRestVersion() {
+        return restVersion;
+    }
+
+    public void setRestVersion(String restVersion) {
+        this.restVersion = restVersion;
     }
 }
