@@ -2,6 +2,12 @@
 httpRequestTimeout = 1000000
 
 [token]
+# REST version is mapped to particular API manager version.
+# Please find the summary of APIM version to REST version mapping below;
+# APIM 2.5.0 -> v0.13
+# APIM 2.6.0 -> v0.14
+# APIM 2.6.1 -> v0.14
+
 restVersion = "v0.14"
 publisherEndpoint = "{baseURL}/api/am/publisher/{restVersion}"
 adminEndpoint = "{baseURL}/api/am/admin/{restVersion}"

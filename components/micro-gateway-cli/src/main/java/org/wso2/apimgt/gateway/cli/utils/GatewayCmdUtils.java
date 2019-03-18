@@ -817,7 +817,13 @@ public class GatewayCmdUtils {
 
     public static void saveConfig(Config config, String configPath) {
         try {
+            String comment = "# REST version is mapped to particular API manager version.\n" +
+                    "# Please find the summary of APIM version to REST version mapping below;\n" +
+                    "# APIM 2.5.0 -> v0.13\n" +
+                    "# APIM 2.6.0 -> v0.14\n" +
+                    "# APIM 2.6.1 -> v0.14";
             TOMLConfigParser.write(configPath, config);
+            TOMLConfigParser.writeComment(configPath,3,comment);
         } catch (ConfigParserException e) {
             System.err.println("Error occurred while parsing configuration, when persisting.");
         }
