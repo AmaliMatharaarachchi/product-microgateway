@@ -77,6 +77,11 @@ public class TokenBuilder {
         return this;
     }
 
+    public TokenBuilder setBaseURL(String baseURL) {
+        this.token.setBaseURL(baseURL);
+        return this;
+    }
+
     public Token build() {
         return token;
     }

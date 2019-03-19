@@ -17,9 +17,6 @@
  */
 package org.wso2.apimgt.gateway.cli.constants;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-
 public class RESTServiceConstants {
 
     public static final String ENDPOINT_TYPE = "endpoint_type";
@@ -46,6 +43,8 @@ public class RESTServiceConstants {
     public static final String CONFIG_ADMIN_ENDPOINT = "{baseURL}/api/am/admin/{restVersion}";
     public static final String CONFIG_REGISTRATION_ENDPOINT = "{baseURL}/client-registration/{restVersion}/register";
     public static final String CONFIG_TOKEN_ENDPOINT = "{baseURL}/oauth2/token";
+    public static final String REST_VERSION_TAG="{restVersion}";
+    public static final String BASE_URL_TAG="{baseURL}";
 
     public static final String DEFAULT_HOST = "https://localhost:9443";
     public static final String DEFAULT_TRUSTSTORE_PATH = "lib/platform/bre/security/ballerinaTruststore.p12";

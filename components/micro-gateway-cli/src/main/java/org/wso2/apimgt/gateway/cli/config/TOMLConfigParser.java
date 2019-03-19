@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class TOMLConfigParser {
 
@@ -62,7 +61,7 @@ public class TOMLConfigParser {
      * Write the given config type to a file.
      *
      * @param configFilePath path to toml file
-     * @param content        type of the config class to be used when de-serializing
+     * @param content            type of the config class to be used when de-serializing
      * @throws ConfigParserException if cannot write the content to file or specified file does not exist
      */
     public static void write(String configFilePath, Object content) throws ConfigParserException {
@@ -76,32 +75,6 @@ public class TOMLConfigParser {
         } catch (IOException e) {
             throw new ConfigParserException("Cannot write the content to configuration file '" + configurationFile + "'.",
                     e);
-        }
-    }
-
-    /**
-     * Write the given comment to a file.
-     *
-     * @param configFilePath path to toml file
-     * @param comment        comment to be added
-     * @param lineNumber     line number of the comment
-     * @throws ConfigParserException if cannot write the content to file or specified file does not exist
-     */
-    public static void writeComment(String configFilePath, int lineNumber, String comment) throws ConfigParserException {
-        Path configurationFile = Paths.get(configFilePath);
-
-        if (Files.exists(configurationFile)) {
-            try {
-                List<String> lines = Files.readAllLines(configurationFile, StandardCharsets.UTF_8);
-                lines.add(lineNumber, comment);
-                Files.write(configurationFile, lines, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new ConfigParserException("Error while writing to configuration file '" + configurationFile +
-                        " Error :" + e);
-            }
-        }
-        else {
-            throw new ConfigParserException("Mandatory configuration file '" + configurationFile + "' does not exists.");
         }
     }
 

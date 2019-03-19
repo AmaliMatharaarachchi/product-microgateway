@@ -44,7 +44,6 @@ import org.wso2.apimgt.gateway.cli.model.config.ContainerConfig;
 import org.wso2.apimgt.gateway.cli.model.config.Token;
 import org.wso2.apimgt.gateway.cli.model.config.TokenBuilder;
 import org.wso2.apimgt.gateway.cli.model.config.Etcd;
-import org.wso2.apimgt.gateway.cli.model.config.BasicAuth;
 import org.wso2.apimgt.gateway.cli.model.rest.ClientCertMetadataDTO;
 import org.wso2.apimgt.gateway.cli.model.rest.ext.ExtendedAPI;
 import org.wso2.apimgt.gateway.cli.model.rest.policy.ApplicationThrottlePolicyDTO;
@@ -74,101 +73,71 @@ import static org.wso2.apimgt.gateway.cli.utils.grpc.GrpcGen.BalGenerationConsta
 /**
  * This class represents the "setup" command and it holds arguments and flags specified by the user.
  */
-@Parameters(commandNames = "setup", commandDescription = "setup information")
-public class SetupCmd implements GatewayLauncherCmd {
+@Parameters(commandNames = "setup", commandDescription = "setup information") public class SetupCmd
+        implements GatewayLauncherCmd {
+
     private static final Logger logger = LoggerFactory.getLogger(SetupCmd.class);
     private static PrintStream outStream = System.out;
 
-    @SuppressWarnings("unused")
-    @Parameter(hidden = true, required = true)
-    private List<String> mainArgs;
+    @SuppressWarnings("unused") @Parameter(hidden = true, required = true) private List<String> mainArgs;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = "--java.debug", hidden = true)
-    private String javaDebugPort;
+    @SuppressWarnings("unused") @Parameter(names = "--java.debug", hidden = true) private String javaDebugPort;
 
-    @Parameter(names = {"-u", "--username"}, hidden = true)
-    private String username;
+    @Parameter(names = { "-u", "--username" }, hidden = true) private String username;
 
-    @Parameter(names = {"-p", "--password"}, hidden = true)
-    private String password;
+    @Parameter(names = { "-p", "--password" }, hidden = true) private String password;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-l", "--label"}, hidden = true)
-    private String label;
+    @SuppressWarnings("unused") @Parameter(names = { "-l", "--label" }, hidden = true) private String label;
 
-    @Parameter(names = {"-s", "--server-url"}, hidden = true)
-    private String baseURL;
+    @Parameter(names = { "-s", "--server-url" }, hidden = true) private String baseURL;
 
-    @Parameter(names = {"-oa", "--openapi"}, hidden = true)
-    private String openApi;
+    @Parameter(names = { "-oa", "--openapi" }, hidden = true) private String openApi;
 
-    @Parameter(names = {"-e", "--endpoint"}, hidden = true)
-    private String endpoint;
+    @Parameter(names = { "-e", "--endpoint" }, hidden = true) private String endpoint;
 
-    @Parameter(names = {"-ec", "--endpointConfig"}, hidden = true)
-    private String endpointConfig;
+    @Parameter(names = { "-ec", "--endpointConfig" }, hidden = true) private String endpointConfig;
 
-    @Parameter(names = {"-t", "--truststore"}, hidden = true)
-    private String trustStoreLocation;
+    @Parameter(names = { "-t", "--truststore" }, hidden = true) private String trustStoreLocation;
 
-    @Parameter(names = {"-w", "--truststore-pass"}, hidden = true)
-    private String trustStorePassword;
+    @Parameter(names = { "-w", "--truststore-pass" }, hidden = true) private String trustStorePassword;
 
-    @Parameter(names = {"-c", "--config"}, hidden = true)
-    private String toolkitConfigPath;
+    @Parameter(names = { "-c", "--config" }, hidden = true) private String toolkitConfigPath;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-d", "--deployment-config"}, hidden = true)
-    private String deploymentConfigPath;
+    @SuppressWarnings("unused") @Parameter(names = { "-d",
+            "--deployment-config" }, hidden = true) private String deploymentConfigPath;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-a", "--api-name"}, hidden = true)
-    private String apiName;
+    @SuppressWarnings("unused") @Parameter(names = { "-a", "--api-name" }, hidden = true) private String apiName;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-v", "--version"}, hidden = true)
-    private String version;
+    @SuppressWarnings("unused") @Parameter(names = { "-v", "--version" }, hidden = true) private String version;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-f", "--force"}, hidden = true, arity = 0)
-    private boolean isForcefully;
+    @SuppressWarnings("unused") @Parameter(names = { "-f",
+            "--force" }, hidden = true, arity = 0) private boolean isForcefully;
 
-    @SuppressWarnings("unused")
-    @Parameter(names = {"-k", "--insecure"}, hidden = true, arity = 0)
-    private boolean isInsecure;
+    @SuppressWarnings("unused") @Parameter(names = { "-k",
+            "--insecure" }, hidden = true, arity = 0) private boolean isInsecure;
 
-    @Parameter(names = {"-b", "--security"}, hidden = true)
-    private String security;
+    @Parameter(names = { "-b", "--security" }, hidden = true) private String security;
 
-    @Parameter(names = {"-etcd", "--enable-etcd"}, hidden = true, arity = 0)
-    private boolean isEtcdEnabled;
+    @Parameter(names = { "-etcd", "--enable-etcd" }, hidden = true, arity = 0) private boolean isEtcdEnabled;
 
     private String publisherEndpoint;
     private String adminEndpoint;
     private String registrationEndpoint;
     private String tokenEndpoint;
-    private String publisherEndpointforConfig;
-    private String adminEndpointforConfig;
-    private String registrationEndpointforConfig;
-    private String tokenEndpointforConfig;
-    private String restVersion;
 
 
     private String clientSecret;
     private boolean isOverwriteRequired;
 
-
     public void execute() {
         String clientID;
         String workspace = GatewayCmdUtils.getUserDir();
         boolean isOpenApi = StringUtils.isNotEmpty(openApi);
-        boolean isGRPC = false;
-        String grpc = null;
+        String grpc;
         String projectName = GatewayCmdUtils.getProjectName(mainArgs);
         if (projectName.contains(" ")) {
-            throw GatewayCmdUtils.createUsageException("Only one argument accepted as the project name. but provided:" +
-                    " " + projectName);
+            throw GatewayCmdUtils.createUsageException(
+                    "Only one argument accepted as the project name. but provided:" + " " + projectName);
         }
         if (StringUtils.isEmpty(toolkitConfigPath)) {
             toolkitConfigPath = GatewayCmdUtils.getMainConfigLocation();
@@ -212,7 +181,8 @@ public class SetupCmd implements GatewayLauncherCmd {
                              * the user
                              */
                             if ((endpoint = promptForTextInput("Enter Endpoint URL: ")).trim().isEmpty()) {
-                                throw GatewayCmdUtils.createUsageException("Micro gateway setup failed: empty endpoint.");
+                                throw GatewayCmdUtils
+                                        .createUsageException("Micro gateway setup failed: empty endpoint.");
                             }
                         }
                     }
@@ -237,11 +207,12 @@ public class SetupCmd implements GatewayLauncherCmd {
                              * the user
                              */
                             if ((endpoint = promptForTextInput("Enter Endpoint URL: ")).trim().isEmpty()) {
-                                throw GatewayCmdUtils.createUsageException("Micro gateway setup failed: empty endpoint.");
+                                throw GatewayCmdUtils
+                                        .createUsageException("Micro gateway setup failed: empty endpoint.");
                             }
                         }
-                        endpointConfig = "{\"production_endpoints\":{\"url\":\"" + endpoint.trim() +
-                                "\"},\"endpoint_type\":\"http\"}";
+                        endpointConfig = "{\"production_endpoints\":{\"url\":\"" + endpoint.trim()
+                                + "\"},\"endpoint_type\":\"http\"}";
                     }
                     codeGenerator.generate(projectName, api, endpointConfig, true);
                     //Initializing the ballerina project and creating .bal folder.
@@ -275,8 +246,8 @@ public class SetupCmd implements GatewayLauncherCmd {
             if (StringUtils.isEmpty(password)) {
                 if ((password = promptForPasswordInput("Enter Password for " + username + ": ")).trim().isEmpty()) {
                     if (StringUtils.isEmpty(password)) {
-                        password = promptForPasswordInput("Password can't be empty; enter password for "
-                                + username + ": ");
+                        password = promptForPasswordInput(
+                                "Password can't be empty; enter password for " + username + ": ");
                         if (password.trim().isEmpty()) {
                             throw GatewayCmdUtils.createUsageException("Micro gateway setup failed: empty password.");
                         }
@@ -286,7 +257,7 @@ public class SetupCmd implements GatewayLauncherCmd {
 
             //setup endpoints
             Token configToken = config.getToken();
-            setEndpoints(configToken);
+            TokenBuilder configTokenValues = setEndpoints(configToken);
 
             //configure trust store
             String configuredTrustStore = config.getToken().getTrustStoreLocation();
@@ -294,9 +265,8 @@ public class SetupCmd implements GatewayLauncherCmd {
                 if (StringUtils.isEmpty(trustStoreLocation)) {
                     isOverwriteRequired = true;
                     if ((trustStoreLocation = promptForTextInput(
-                            "Enter Trust store location: [" + RESTServiceConstants.DEFAULT_TRUSTSTORE_PATH +
-                                    "]")).trim()
-                            .isEmpty()) {
+                            "Enter Trust store location: [" + RESTServiceConstants.DEFAULT_TRUSTSTORE_PATH + "]"))
+                            .trim().isEmpty()) {
                         trustStoreLocation = RESTServiceConstants.DEFAULT_TRUSTSTORE_PATH;
                     }
                 }
@@ -321,9 +291,8 @@ public class SetupCmd implements GatewayLauncherCmd {
             if (StringUtils.isEmpty(configuredTrustStorePass)) {
                 if (StringUtils.isEmpty(trustStorePassword)) {
                     isOverwriteRequired = true;
-                    if ((trustStorePassword = promptForPasswordInput("Enter Trust store password: " +
-                            "[ use default? ]")).trim()
-                            .isEmpty()) {
+                    if ((trustStorePassword = promptForPasswordInput(
+                            "Enter Trust store password: " + "[ use default? ]")).trim().isEmpty()) {
                         trustStorePassword = RESTServiceConstants.DEFAULT_TRUSTSTORE_PASS;
                     }
                 }
@@ -333,8 +302,8 @@ public class SetupCmd implements GatewayLauncherCmd {
 
             File trustStoreFile = new File(trustStoreLocation);
             if (!trustStoreFile.isAbsolute()) {
-                trustStoreLocation = GatewayCmdUtils.getUnixPath(GatewayCmdUtils.getCLIHome() + File.separator
-                        + trustStoreLocation);
+                trustStoreLocation = GatewayCmdUtils
+                        .getUnixPath(GatewayCmdUtils.getCLIHome() + File.separator + trustStoreLocation);
             }
             trustStoreFile = new File(trustStoreLocation);
             if (!trustStoreFile.exists()) {
@@ -348,9 +317,7 @@ public class SetupCmd implements GatewayLauncherCmd {
             System.setProperty("javax.net.ssl.trustStorePassword", trustStorePassword);
 
             //Security Schemas settings
-            if (security == null) {
-                security = "oauth2";
-            } else if (security == "") {
+            if (StringUtils.isEmpty(security)) {
                 security = "oauth2";
             }
             setSecuritySchemas(security);
@@ -388,7 +355,7 @@ public class SetupCmd implements GatewayLauncherCmd {
                     apis.add(api);
                 }
             }
-            if (apis == null || (apis != null && apis.isEmpty())) {
+            if (apis == null || (apis.isEmpty())) {
                 // Delete folder
                 GatewayCmdUtils.deleteProject(workspace + File.separator + projectName);
                 String errorMsg;
@@ -415,8 +382,8 @@ public class SetupCmd implements GatewayLauncherCmd {
                 InitHandler.initialize(Paths.get(GatewayCmdUtils.getProjectDirectoryPath(projectName)), null,
                         new ArrayList<>(), null);
                 try {
-                    changesDetected = HashUtils.detectChanges(apis, subscriptionPolicies,
-                            applicationPolicies, projectName);
+                    changesDetected = HashUtils
+                            .detectChanges(apis, subscriptionPolicies, applicationPolicies, projectName);
                 } catch (HashingException e) {
                     logger.error("Error while checking for changes of resources. Skipping no-change detection..", e);
                     throw new CLIInternalException(
@@ -436,17 +403,8 @@ public class SetupCmd implements GatewayLauncherCmd {
 
                 String encryptedCS = GatewayCmdUtils.encrypt(clientSecret, password);
                 String encryptedTrustStorePass = GatewayCmdUtils.encrypt(trustStorePassword, password);
-                Token token = new TokenBuilder()
-                        .setRestVersion(restVersion)
-                        .setPublisherEndpoint(publisherEndpointforConfig)
-                        .setAdminEndpoint(adminEndpointforConfig)
-                        .setRegistrationEndpoint(registrationEndpointforConfig)
-                        .setTokenEndpoint(tokenEndpointforConfig)
-                        .setUsername(username)
-                        .setClientId(clientID)
-                        .setClientSecret(encryptedCS)
-                        .setTrustStoreLocation(trustStoreLocation)
-                        .setTrustStorePassword(encryptedTrustStorePass)
+                Token token = configTokenValues.setUsername(username).setClientId(clientID).setClientSecret(encryptedCS)
+                        .setTrustStoreLocation(trustStoreLocation).setTrustStorePassword(encryptedTrustStorePass)
                         .build();
                 newConfig.setToken(token);
                 newConfig.setCorsConfiguration(GatewayCmdUtils.getDefaultCorsConfig());
@@ -454,9 +412,8 @@ public class SetupCmd implements GatewayLauncherCmd {
             }
 
             if (!changesDetected) {
-                outStream.println(
-                        "No changes received from the server since the previous setup."
-                                + " If you have already a built distribution, it can be reused.");
+                outStream.println("No changes received from the server since the previous setup."
+                        + " If you have already a built distribution, it can be reused.");
             }
             outStream.println("Setting up project " + projectName + " is successful.");
 
@@ -477,25 +434,22 @@ public class SetupCmd implements GatewayLauncherCmd {
      * @param version API version
      */
     private void validateAPIGetRequestParams(String label, String apiName, String version) {
-        if ((StringUtils.isEmpty(label) && (StringUtils.isEmpty(apiName) || StringUtils.isEmpty(version))) ||
-                StringUtils.isNotEmpty(label) && (StringUtils.isNotEmpty(apiName) || StringUtils.isNotEmpty(version)) ||
-                (StringUtils.isEmpty(apiName) && StringUtils.isNotEmpty(version)) ||
-                (StringUtils.isNotEmpty(apiName) && StringUtils.isEmpty(version))) {
+        if ((StringUtils.isEmpty(label) && (StringUtils.isEmpty(apiName) || StringUtils.isEmpty(version)))
+                || StringUtils.isNotEmpty(label) && (StringUtils.isNotEmpty(apiName) || StringUtils.isNotEmpty(version))
+                || (StringUtils.isEmpty(apiName) && StringUtils.isNotEmpty(version)) || (StringUtils.isNotEmpty(apiName)
+                && StringUtils.isEmpty(version))) {
             throw GatewayCmdUtils.createUsageException(
                     "Either label (-l <label>) or API name (-a <api-name>) with version (-v <version>) "
-                            + "should be provided."
-                            + "\n\nEx:\tmicro-gw setup accounts-project -l accounts"
+                            + "should be provided." + "\n\nEx:\tmicro-gw setup accounts-project -l accounts"
                             + "\n\tmicro-gw setup pizzashack-project -a Pizzashack -v 1.0.0");
         }
     }
 
-    @Override
-    public String getName() {
+    @Override public String getName() {
         return GatewayCliCommands.SETUP;
     }
 
-    @Override
-    public void setParentCmdParser(JCommander parentCmdParser) {
+    @Override public void setParentCmdParser(JCommander parentCmdParser) {
     }
 
     private String promptForTextInput(String msg) {
@@ -538,26 +492,26 @@ public class SetupCmd implements GatewayLauncherCmd {
         }
     }
 
-    public void setSecuritySchemas(String schemas) {
+    private void setSecuritySchemas(String schemas) {
         Config config = GatewayCmdUtils.getConfig();
         BasicAuth basicAuth = new BasicAuth();
         boolean basic = false;
         boolean oauth2 = false;
         String[] schemasArray = schemas.trim().split("\\s*,\\s*");
-        for (int i = 0; i < schemasArray.length; i++) {
-            if (schemasArray[i].equalsIgnoreCase("basic")) {
+        for (String s : schemasArray) {
+            if (s.equalsIgnoreCase("basic")) {
                 basic = true;
-            } else if (schemasArray[i].equalsIgnoreCase("oauth2")) {
+            } else if (s.equalsIgnoreCase("oauth2")) {
                 oauth2 = true;
             }
         }
         if (basic && oauth2) {
             basicAuth.setOptional(true);
             basicAuth.setRequired(false);
-        } else if (basic && !oauth2) {
+        } else if (basic) {
             basicAuth.setRequired(true);
             basicAuth.setOptional(false);
-        } else if (!basic && oauth2) {
+        } else if (oauth2) {
             basicAuth.setOptional(false);
             basicAuth.setRequired(false);
         }
@@ -568,107 +522,130 @@ public class SetupCmd implements GatewayLauncherCmd {
      * Set endpoints of publisher, admin, registration and token
      *
      * @param token token from config file
+     * @return TokenBuilder modified token to be written back to configuration file
      */
-    private void setEndpoints(Token token) {
-        boolean endPointsneeded;
-        boolean baseURLneeded;
-        boolean restVersionNeeded;
+    private TokenBuilder setEndpoints(Token token) {
+        //new token values for config(to rewrite configuration file)
+        TokenBuilder configTokenValues = new TokenBuilder();
 
-        publisherEndpointforConfig = token.getPublisherEndpoint();
-        adminEndpointforConfig = token.getAdminEndpoint();
-        registrationEndpointforConfig = token.getRegistrationEndpoint();
-        tokenEndpointforConfig = token.getTokenEndpoint();
-        restVersion = token.getRestVersion();
+        boolean isEndPointsNeeded; //if endpoint(s) is empty and not defined
+        boolean isBaseURLNeeded; //if endpoint(s) contains {baseURL} or endPointsNeeded
+        boolean isRestVersionNeeded; //if endpoint(s) contains {restVersion}
 
-        endPointsneeded = StringUtils.isEmpty(publisherEndpointforConfig) || StringUtils.isEmpty(adminEndpointforConfig)
-                || StringUtils.isEmpty(registrationEndpointforConfig) || StringUtils.isEmpty(tokenEndpointforConfig);
+        String restVersion = token.getRestVersion();
+        publisherEndpoint = token.getPublisherEndpoint();
+        adminEndpoint = token.getAdminEndpoint();
+        registrationEndpoint = token.getRegistrationEndpoint();
+        tokenEndpoint = token.getTokenEndpoint();
 
-        baseURLneeded = publisherEndpointforConfig.contains("{baseURL}") || adminEndpointforConfig.contains("{baseURL}")
-                || registrationEndpointforConfig.contains("{baseURL}") || tokenEndpointforConfig.contains("{baseURL}")
-                || endPointsneeded;
+        //copy current token config values
+        configTokenValues.setPublisherEndpoint(publisherEndpoint);
+        configTokenValues.setAdminEndpoint(adminEndpoint);
+        configTokenValues.setRegistrationEndpoint(registrationEndpoint);
+        configTokenValues.setTokenEndpoint(tokenEndpoint);
+        configTokenValues.setRestVersion(restVersion);
+        configTokenValues.setBaseURL(token.getBaseURL());
 
-        restVersionNeeded = publisherEndpointforConfig.contains("{restVersion}") ||
-                adminEndpointforConfig.contains("{restVersion}") ||
-                registrationEndpointforConfig.contains("{restVersion}") || endPointsneeded;
+        isEndPointsNeeded = StringUtils.isEmpty(publisherEndpoint) || StringUtils.isEmpty(adminEndpoint) || StringUtils
+                .isEmpty(registrationEndpoint) || StringUtils.isEmpty(tokenEndpoint);
 
-        //generate endpoints
-        if (endPointsneeded) {
-            if (StringUtils.isEmpty(publisherEndpointforConfig)) {
-                publisherEndpointforConfig = RESTServiceConstants.CONFIG_PUBLISHER_ENDPOINT;
+        //set endpoints format if endpoint(s) is empty
+        if (isEndPointsNeeded) {
+            if (StringUtils.isEmpty(publisherEndpoint)) {
+                publisherEndpoint = RESTServiceConstants.CONFIG_PUBLISHER_ENDPOINT;
             }
-            if (StringUtils.isEmpty(adminEndpointforConfig)) {
-                adminEndpointforConfig = RESTServiceConstants.CONFIG_ADMIN_ENDPOINT;
+            if (StringUtils.isEmpty(adminEndpoint)) {
+                adminEndpoint = RESTServiceConstants.CONFIG_ADMIN_ENDPOINT;
             }
-            if (StringUtils.isEmpty(registrationEndpointforConfig)) {
-                registrationEndpointforConfig = RESTServiceConstants.CONFIG_REGISTRATION_ENDPOINT;
+            if (StringUtils.isEmpty(registrationEndpoint)) {
+                registrationEndpoint = RESTServiceConstants.CONFIG_REGISTRATION_ENDPOINT;
             }
-            if (StringUtils.isEmpty(tokenEndpointforConfig)) {
-                tokenEndpointforConfig = RESTServiceConstants.CONFIG_TOKEN_ENDPOINT;
+            if (StringUtils.isEmpty(tokenEndpoint)) {
+                tokenEndpoint = RESTServiceConstants.CONFIG_TOKEN_ENDPOINT;
             }
         }
 
-        //setup base URL
-        if (baseURLneeded) {
-            String userInputURL = getBaseURLfromCmd();
-            if (!userInputURL.isEmpty()) {
-                baseURL = userInputURL;
-            } else {
-                baseURL = RESTServiceConstants.DEFAULT_HOST;
+        isBaseURLNeeded =
+                publisherEndpoint.contains("{baseURL}") || adminEndpoint.contains("{baseURL}") || registrationEndpoint
+                        .contains("{baseURL}") || tokenEndpoint.contains("{baseURL}") || isEndPointsNeeded;
+
+        isRestVersionNeeded = publisherEndpoint.contains("{restVersion}") || adminEndpoint.contains("{restVersion}")
+                || registrationEndpoint.contains("{restVersion}") || isEndPointsNeeded;
+
+        //set base URL
+        if (isBaseURLNeeded) {
+
+            //if base url not set from setup argument "-s", "--server-url"
+            if (StringUtils.isEmpty(baseURL)) {
+                baseURL = token.getBaseURL();
+
+                //if baseURL not configured in token, use default host
+                if (StringUtils.isEmpty(baseURL)) {
+                    baseURL = RESTServiceConstants.DEFAULT_HOST;
+                }
+
+                //cli command to ask user to accept the baseURL or enter a new base url
+                String userInputURL = getBaseURLfromCmd(baseURL);
+                if (!userInputURL.isEmpty()) {
+                    baseURL = userInputURL;
+                    isOverwriteRequired = true;
+                }
             }
-
-            publisherEndpointforConfig = publisherEndpointforConfig.replace("{baseURL}", baseURL);
-            adminEndpointforConfig = adminEndpointforConfig.replace("{baseURL}", baseURL);
-            registrationEndpointforConfig = registrationEndpointforConfig.replace("{baseURL}", baseURL);
-            tokenEndpointforConfig = tokenEndpointforConfig.replace("{baseURL}", baseURL);
-
-            isOverwriteRequired = true;
+            configTokenValues.setBaseURL(baseURL);
         }
 
-        //get rest version
-        if (restVersionNeeded) {
+        // set rest version
+        if (isRestVersionNeeded) {
+
             if (StringUtils.isEmpty(restVersion)) {
                 restVersion = RESTServiceConstants.CONFIG_REST_VERSION;
             }
             informRestVersiontoUser(restVersion);
+            configTokenValues.setRestVersion(restVersion);
         }
 
-        //generate endpoint URLs
-        generateURLs(restVersion);
+        if (isBaseURLNeeded || isRestVersionNeeded) {
+            publisherEndpoint = publisherEndpoint.replace(RESTServiceConstants.BASE_URL_TAG, baseURL)
+                    .replace(RESTServiceConstants.REST_VERSION_TAG, restVersion);
+            adminEndpoint = adminEndpoint.replace(RESTServiceConstants.BASE_URL_TAG, baseURL)
+                    .replace(RESTServiceConstants.REST_VERSION_TAG, restVersion);
+            registrationEndpoint = registrationEndpoint.replace(RESTServiceConstants.BASE_URL_TAG, baseURL)
+                    .replace(RESTServiceConstants.REST_VERSION_TAG, restVersion);
+            tokenEndpoint = tokenEndpoint.replace(RESTServiceConstants.BASE_URL_TAG, baseURL)
+                    .replace(RESTServiceConstants.REST_VERSION_TAG, restVersion);
+        }
+
+        //validate URLs
+        validateURL(publisherEndpoint);
+        validateURL(adminEndpoint);
+        validateURL(registrationEndpoint);
+        validateURL(tokenEndpoint);
+
+        return configTokenValues;
     }
 
     /**
-     * generate URLs of publisher, admin, registration and token endpoints
+     * validate URLs
      *
-     * @param restVersion API Manager's REST version
+     * @param urlString url string to be validated
      */
-    private void generateURLs(String restVersion) {
+    private void validateURL(String urlString) {
 
         try {
-            publisherEndpoint=publisherEndpointforConfig;
-            adminEndpoint=adminEndpointforConfig;
-            registrationEndpoint=registrationEndpointforConfig;
-            tokenEndpoint=tokenEndpointforConfig;
-
-            publisherEndpoint = new URL(publisherEndpoint.replace("{restVersion}", restVersion))
-                    .toString();
-            adminEndpoint = new URL(adminEndpoint.replace("{restVersion}", restVersion))
-                    .toString();
-            registrationEndpoint = new URL(registrationEndpoint.replace("{restVersion}", restVersion))
-                    .toString();
-            tokenEndpoint = new URL(tokenEndpoint).toString();
-
+            new URL(urlString);
         } catch (MalformedURLException e) {
-            logger.error("Malformed URL provided {}", baseURL);
+            logger.error("Malformed URL provided {}", urlString);
             throw new CLIInternalException("Error occurred while setting up URL configurations.");
         }
+
     }
 
     /**
      * prompt to get the base URL
      */
-    private String getBaseURLfromCmd() {
+    private String getBaseURLfromCmd(String defaultBaseURL) {
         String userInputURL;
-        userInputURL = promptForTextInput("Enter APIM base URL [" + RESTServiceConstants.DEFAULT_HOST + "]: ").trim();
+        userInputURL = promptForTextInput("Enter APIM base URL [" + defaultBaseURL + "]: ").trim();
         return userInputURL;
     }
 
@@ -678,10 +655,9 @@ public class SetupCmd implements GatewayLauncherCmd {
      * @param restVersion API Manager's REST version
      */
     private void informRestVersiontoUser(String restVersion) {
-        outStream.println("You are using REST version - " + restVersion + " (If you want to change this, go to " +
-                "<MICROGW_HOME>/conf/toolkit-config.toml)");
+        outStream.println(
+                "You are using REST version - " + restVersion + " of API Manager. (If you want to change this, go to "
+                        + "<MICROGW_HOME>/conf/toolkit-config.toml)");
     }
 
 }
-
-
