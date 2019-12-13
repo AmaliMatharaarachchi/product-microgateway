@@ -73,6 +73,7 @@ public class CliConstants {
     public static final String VERSION_PLACEHOLDER = "${version}";
     public static final String EXPAND_PLACEHOLDER = "${expand}";
     public static final String API_ID_PLACEHOLDER = "${apiId}";
+    public static final String MICROGW_HOME_PLACEHOLDER = "${MICROGW_HOME}";
     public static final String CHARSET_UTF8 = "UTF-8";
     public static final String SYS_PROP_USER_DIR = "user.dir";
     public static final String SYS_PROP_CURRENT_DIR = "current.dir";

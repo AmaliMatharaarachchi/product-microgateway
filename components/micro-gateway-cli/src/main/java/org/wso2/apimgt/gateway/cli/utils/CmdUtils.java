@@ -653,6 +653,16 @@ public final class CmdUtils {
     }
 
     /**
+     * Returns location of resource folder
+     *
+     * @return path configuration file
+     */
+    public static String getMicroGWConfResourceLocation() {
+        return getCLIHome() + File.separator + CliConstants.GW_DIST_RESOURCES + File.separator
+                + CliConstants.GW_DIST_CONF;
+    }
+
+    /**
      * Returns path to the /extensions of a given project in the current working directory
      *
      * @param projectName name of the project
