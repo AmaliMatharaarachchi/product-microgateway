@@ -27,6 +27,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.wso2.micro.gateway.filter.core.analytics.AnalyticsFilter;
 import org.wso2.micro.gateway.filter.core.api.APIFactory;
 import org.wso2.micro.gateway.filter.core.common.CacheProvider;
 import org.wso2.micro.gateway.filter.core.common.ReferenceHolder;
@@ -64,11 +65,22 @@ public class AuthServer {
                 .workerEventLoopGroup(workerGroup).addService(new ExtAuthService())
                 .channelType(NioServerSocketChannel.class).executor(executor).build();
 
+        Server ana_server = NettyServerBuilder.forPort(8090).maxConcurrentCallsPerConnection(20)
+                .keepAliveTime(60, TimeUnit.SECONDS).maxInboundMessageSize(1000000000).bossEventLoopGroup(bossGroup)
+                .workerEventLoopGroup(workerGroup).addService(new AnalyticsServer())
+                .channelType(NioServerSocketChannel.class).executor(executor).build();
+
+        ana_server.start();
         // Load configurations
         KeyManagerDataService keyManagerDataService = new KeyManagerDataServiceImpl();
         MGWConfiguration mgwConfiguration = MGWConfiguration.getInstance();
         ReferenceHolder.getInstance().setKeyManagerDataService(keyManagerDataService);
         ReferenceHolder.getInstance().setMGWConfiguration(mgwConfiguration);
+
+        // Enable global filters
+        AnalyticsFilter analyticsFilter = new AnalyticsFilter();
+        analyticsFilter.init();
+
         //TODO: Add API is only for testing this has to come via the rest API.
         addAPI();
         CacheProvider.init();
@@ -89,7 +101,7 @@ public class AuthServer {
     }
 
     private static void addAPI() {
-        String apiPath = "/home/ubuntu/mg/apis/";
+        String apiPath = "/Users/amali/workspace/mgw/envoy/gw-setup/filter-chain/apis";
         try {
             Files.walk(Paths.get(apiPath)).filter(path -> {
                 Path fileName = path.getFileName();
