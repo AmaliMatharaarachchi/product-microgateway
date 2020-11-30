@@ -27,11 +27,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.wso2.micro.gateway.filter.core.analytics.AnalyticsFilter;
 import org.wso2.micro.gateway.filter.core.api.APIFactory;
 import org.wso2.micro.gateway.filter.core.common.CacheProvider;
 import org.wso2.micro.gateway.filter.core.common.ReferenceHolder;
 import org.wso2.micro.gateway.filter.core.config.MGWConfiguration;
+import org.wso2.micro.gateway.filter.core.filters.AnalyticsFilter;
 import org.wso2.micro.gateway.filter.core.keymgt.KeyManagerDataService;
 import org.wso2.micro.gateway.filter.core.keymgt.KeyManagerDataServiceImpl;
 import org.wso2.micro.gateway.filter.core.listener.GatewayJMSMessageListener;
@@ -65,12 +65,6 @@ public class AuthServer {
                 .workerEventLoopGroup(workerGroup).addService(new ExtAuthService())
                 .channelType(NioServerSocketChannel.class).executor(executor).build();
 
-        Server ana_server = NettyServerBuilder.forPort(8090).maxConcurrentCallsPerConnection(20)
-                .keepAliveTime(60, TimeUnit.SECONDS).maxInboundMessageSize(1000000000).bossEventLoopGroup(bossGroup)
-                .workerEventLoopGroup(workerGroup).addService(new AnalyticsServer())
-                .channelType(NioServerSocketChannel.class).executor(executor).build();
-
-        ana_server.start();
         // Load configurations
         KeyManagerDataService keyManagerDataService = new KeyManagerDataServiceImpl();
         MGWConfiguration mgwConfiguration = MGWConfiguration.getInstance();
@@ -78,8 +72,7 @@ public class AuthServer {
         ReferenceHolder.getInstance().setMGWConfiguration(mgwConfiguration);
 
         // Enable global filters
-        AnalyticsFilter analyticsFilter = new AnalyticsFilter();
-        analyticsFilter.init();
+        new AnalyticsFilter();
 
         //TODO: Add API is only for testing this has to come via the rest API.
         addAPI();

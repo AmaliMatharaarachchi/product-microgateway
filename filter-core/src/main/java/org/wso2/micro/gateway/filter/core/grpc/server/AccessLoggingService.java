@@ -29,7 +29,7 @@ import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.grpc.stub.StreamObserver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.wso2.micro.gateway.filter.core.analytics.AnalyticsFilter;
+import org.wso2.micro.gateway.filter.core.filters.AnalyticsFilter;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -37,39 +37,27 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-//import io.envoyproxy.envoy.config.core.v3.HeaderValue;
-//import io.envoyproxy.envoy.config.core.v3.HeaderValueOption;
-//import io.envoyproxy.envoy.service.auth.v3.AuthorizationGrpc;
-//import io.envoyproxy.envoy.service.auth.v3.CheckRequest;
-//import io.envoyproxy.envoy.service.auth.v3.CheckResponse;
-//import io.envoyproxy.envoy.service.auth.v3.DeniedHttpResponse;
-//import io.envoyproxy.envoy.service.auth.v3.OkHttpResponse;
-//import io.envoyproxy.envoy.type.v3.HttpStatus;
-
 /**
  * This is the gRPC server written to match with the envoy ext-authz filter proto file. Envoy proxy call this service.
  * This is the entry point to the filter chain process for a request.
  */
 public class AccessLoggingService extends AccessLogServiceGrpc.AccessLogServiceImplBase {
 
-    private RequestHandler requestHandler = new RequestHandler();
     private static final Logger logger = LogManager.getLogger(AccessLoggingService.class);
-    AnalyticsFilter analyticsFilter;
-    AnalyticsService analyticsService = new AnalyticsService();
+    private AnalyticsFilter analyticsFilter;
 
-    public AccessLoggingService(AnalyticsFilter analyticsFilter) {
+    public boolean init (AnalyticsFilter analyticsFilter) {
         this.analyticsFilter = analyticsFilter;
-        startAccessLoggingServer();
+        return startAccessLoggingServer();
     }
 
     @Override
     public StreamObserver<StreamAccessLogsMessage> streamAccessLogs
             (StreamObserver<StreamAccessLogsResponse> responseObserver) {
-        return new StreamObserver<StreamAccessLogsMessage>() {
+        return new StreamObserver<>() {
             @Override
             public void onNext(StreamAccessLogsMessage message) {
                 logger.info("Received msg" + message.toString());
-                analyticsService.send();
                 analyticsFilter.handleMsg(message);
             }
 
@@ -95,15 +83,16 @@ public class AccessLoggingService extends AccessLogServiceGrpc.AccessLogServiceI
         final BlockingQueue<Runnable> blockingQueue = new LinkedBlockingQueue(blockingQueueLength);
         final Executor executor = new MGWThreadPoolExecutor(400, 500, 30, TimeUnit.SECONDS, blockingQueue);
 
-        Server analyticsServer = NettyServerBuilder.forPort(18090).maxConcurrentCallsPerConnection(20)
+        Server accessLoggerService = NettyServerBuilder.forPort(18090).maxConcurrentCallsPerConnection(20)
                 .keepAliveTime(60, TimeUnit.SECONDS).maxInboundMessageSize(1000000000).bossEventLoopGroup(bossGroup)
                 .workerEventLoopGroup(workerGroup).addService(this)
                 .channelType(NioServerSocketChannel.class).executor(executor).build();
         // Start the server
         try {
-            analyticsServer.start();
+            accessLoggerService.start();
         } catch (IOException e) {
-            logger.error("Error while starting the grpc access logging server");
+            logger.error("Error while starting the gRPC access logging server");
+            return false;
         }
         logger.info("Access loggers Sever started Listening in port : " + 18090);
         return true;

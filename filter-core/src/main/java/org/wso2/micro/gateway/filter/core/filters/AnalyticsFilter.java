@@ -15,22 +15,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.micro.gateway.filter.core.analytics;
+package org.wso2.micro.gateway.filter.core.filters;
 
 import io.envoyproxy.envoy.service.accesslog.v3.StreamAccessLogsMessage;
-import org.wso2.micro.gateway.filter.core.api.RequestContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.filter.core.grpc.server.AccessLoggingService;
 
 /**
  * This is the filter handling the authentication for the requests flowing through the gateway.
  */
 public class AnalyticsFilter {
+    private static final Logger logger = LogManager.getLogger(AnalyticsFilter.class);
 
-    public void init() {
-        AccessLoggingService accessLoggingService = new AccessLoggingService(this);
+    public AnalyticsFilter() {
+        AccessLoggingService accessLoggingService = new AccessLoggingService();
+        if (accessLoggingService.init(this)) {
+            //start analytics publishing server
+        } else {
+            logger.warn("Analytics filter initiation failed due to access logger service failure");
+        }
     }
 
     public boolean handleMsg(StreamAccessLogsMessage message) {
+        // TODO (amalimatharaarachchi) process message and set analytics data
         return true;
     }
 
