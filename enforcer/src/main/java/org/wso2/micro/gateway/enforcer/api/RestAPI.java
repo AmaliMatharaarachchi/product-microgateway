@@ -24,6 +24,7 @@ import org.wso2.micro.gateway.enforcer.Filter;
 import org.wso2.micro.gateway.enforcer.api.config.APIConfig;
 import org.wso2.micro.gateway.enforcer.api.config.ResourceConfig;
 import org.wso2.micro.gateway.enforcer.constants.APIConstants;
+import org.wso2.micro.gateway.enforcer.filters.ThrottleFilter;
 import org.wso2.micro.gateway.enforcer.security.AuthFilter;
 
 import java.util.ArrayList;
@@ -104,6 +105,9 @@ public class RestAPI implements API {
     private void initFilters() {
         AuthFilter authFilter = new AuthFilter();
         authFilter.init(apiConfig);
+        ThrottleFilter throttleFilter = new ThrottleFilter();
+        throttleFilter.init(apiConfig);
         this.filters.add(authFilter);
+        this.filters.add(throttleFilter);
     }
 }

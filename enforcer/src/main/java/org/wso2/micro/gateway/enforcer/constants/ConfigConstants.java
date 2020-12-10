@@ -52,4 +52,25 @@ public class ConfigConstants {
     public static final String MGW_TRUST_STORE_LOCATION = "truststore.location";
     public static final String MGW_TRUST_STORE_TYPE = "truststore.type";
     public static final String MGW_TRUST_STORE_PASSWORD = "truststore.password";
+
+    //tm configurations
+    public static final String TM_BINARY_AGENT_THROTTLE_CONF_INSTANCE_ID = "throttlingConfig.binary.agent";
+    public static final String TM_BINARY_AGENT_PROTOCOL_VERSIONS = "sslEnabledProtocols";
+    public static final String TM_BINARY_AGENT_CIPHERS = "ciphers";
+    public static final String TM_AGENT_QUEUE_SIZE = "queueSize";
+    public static final String TM_AGENT_BATCH_SIZE = "batchSize";
+    public static final String TM_AGENT_THREAD_POOL_CORE_SIZE = "corePoolSize";
+    public static final String TM_AGENT_THREAD_POOL_MAXIMUM_SIZE = "maxPoolSize";
+    public static final String TM_AGENT_SOCKET_TIMEOUT_MS = "socketTimeoutMS";
+    public static final String TM_AGENT_THREAD_POOL_KEEP_ALIVE_TIME = "keepAliveTimeInPool";
+    public static final String TM_AGENT_RECONNECTION_INTERVAL = "reconnectionInterval";
+    public static final String TM_AGENT_MAX_TRANSPORT_POOL_SIZE = "maxTransportPoolSize";
+    public static final String TM_AGENT_MAX_IDLE_CONNECTIONS = "maxIdleConnections";
+    public static final String TM_AGENT_EVICTION_TIME_PERIOD = "evictionTimePeriod";
+    public static final String TM_AGENT_MIN_IDLE_TIME_IN_POOL = "minIdleTimeInPool";
+    public static final String TM_AGENT_SECURE_MAX_TRANSPORT_POOL_SIZE = "secureMaxIdleTransportPoolSize";
+    public static final String TM_AGENT_SECURE_MAX_IDLE_CONNECTIONS = "secureMaxIdleConnections";
+    public static final String TM_AGENT_SECURE_EVICTION_TIME_PERIOD = "secureEvictionTimePeriod";
+    public static final String TM_AGENT_SECURE_MIN_IDLE_TIME_IN_POOL = "secureMinIdleTimeInPool";
+
 }

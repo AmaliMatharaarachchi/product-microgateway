@@ -23,9 +23,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.enforcer.constants.ConfigConstants;
+import org.wso2.micro.gateway.enforcer.constants.ConfigDefaultValues;
 import org.wso2.micro.gateway.enforcer.dto.EventHubConfigurationDto;
 import org.wso2.micro.gateway.enforcer.dto.JWKSConfigurationDTO;
 import org.wso2.micro.gateway.enforcer.dto.TokenIssuerDto;
+import org.wso2.micro.gateway.enforcer.dto.throttleConfigDTOs.TMBinaryAgentConfigDTO;
 import org.wso2.micro.gateway.enforcer.exception.MGWException;
 
 import java.io.File;
@@ -54,6 +56,12 @@ public class MGWConfiguration {
     private static Map<String, TokenIssuerDto> issuersMap;
     private static EventHubConfigurationDto eventHubConfiguration;
     private static KeyStore trustStore = null;
+
+    public TMBinaryAgentConfigDTO getTmBinaryAgentConfigDTO() {
+        return tmBinaryAgentConfigDTO;
+    }
+
+    private TMBinaryAgentConfigDTO tmBinaryAgentConfigDTO;
 
     private MGWConfiguration() throws MGWException {
         try {
@@ -87,6 +95,8 @@ public class MGWConfiguration {
 
         // Set Event Hub related configuration.
         populateEventHubConfiguration();
+
+        populateTMBinaryAgentConfig();
     }
 
     private void populateJWTIssuerConfiguration() throws KeyStoreException {
@@ -130,9 +140,17 @@ public class MGWConfiguration {
         eventHubConfiguration.setEventHubReceiverConfiguration(receiverConfiguration);
     }
 
+    private void populateTMBinaryAgentConfig() {
+        tmBinaryAgentConfigDTO = new TMBinaryAgentConfigDTO();
+        Toml tmconfig = configToml.getTable(ConfigConstants.TM_BINARY_AGENT_THROTTLE_CONF_INSTANCE_ID);
+        tmBinaryAgentConfigDTO = tmconfig.to(TMBinaryAgentConfigDTO.class);
+        tmBinaryAgentConfigDTO.setTrustStorePath(configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION));
+        tmBinaryAgentConfigDTO.setTrustStorePassword(configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD));
+    }
+
     private void loadTrustStore() {
         String trustStoreLocation = configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION);
-        String trustStorePassword = configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD);;
+        String trustStorePassword = configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD);
         if (trustStoreLocation != null && trustStorePassword != null) {
             try {
                 InputStream inputStream = new FileInputStream(new File(trustStoreLocation));
@@ -148,6 +166,7 @@ public class MGWConfiguration {
 
     /**
      * Get the issuer configuration for the provided issuer. Returns null if the config not found.
+     *
      * @return : JWTIssuerConfig object.
      */
     public Map<String, TokenIssuerDto> getJWTIssuers() {

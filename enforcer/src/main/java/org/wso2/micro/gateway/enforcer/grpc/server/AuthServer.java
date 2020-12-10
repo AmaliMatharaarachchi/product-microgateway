@@ -18,6 +18,7 @@
 
 package org.wso2.micro.gateway.enforcer.grpc.server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.Server;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import io.grpc.netty.shaded.io.netty.channel.EventLoopGroup;
@@ -28,11 +29,15 @@ import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.enforcer.common.CacheProvider;
 import org.wso2.micro.gateway.enforcer.common.ReferenceHolder;
 import org.wso2.micro.gateway.enforcer.config.MGWConfiguration;
+import org.wso2.micro.gateway.enforcer.globalthrottle.ThrottleAgent;
+import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.DataPublisherConstants;
 import org.wso2.micro.gateway.enforcer.keymgt.KeyManagerDataService;
 import org.wso2.micro.gateway.enforcer.keymgt.KeyManagerDataServiceImpl;
 import org.wso2.micro.gateway.enforcer.listener.GatewayJMSMessageListener;
 import org.wso2.micro.gateway.enforcer.subscription.SubscriptionDataHolder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -72,10 +77,23 @@ public class AuthServer {
             logger.info("Event Hub configuration enabled... Starting JMS listener...");
             GatewayJMSMessageListener.init(mgwConfiguration.getEventHubConfiguration());
         }
+
         //TODO: Get the tenant domain from config
         SubscriptionDataHolder.getInstance().registerTenantSubscriptionStore("carbon.super");
 
+        // init global throttling
+        ObjectMapper oMapper = new ObjectMapper();
+        ThrottleAgent.setTMBinaryAgentConfiguration(oMapper.convertValue(mgwConfiguration.getTmBinaryAgentConfigDTO(), Map.class));
+        HashMap<String, Object> pubConfig = new HashMap<>();
+        pubConfig.put(DataPublisherConstants.RECEIVER_URL_GROUP, "tcp://localhost:9611");
+        pubConfig.put(DataPublisherConstants.AUTH_URL_GROUP, "ssl://localhost:9711");
+        ThrottleAgent.setTMBinaryPublisherConfiguration(pubConfig);
+        ThrottleAgent.startThrottlePublisherPool();
+
         // Don't exit the main thread. Wait until server is terminated.
         server.awaitTermination();
+
+
     }
+
 }

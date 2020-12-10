@@ -50,4 +50,4 @@ USER ${MG_USER}
 COPY maven/ lib/
 COPY maven/conf conf
 COPY maven/security mg/security
-CMD java $JAVA_OPTS -Dlog4j.configurationFile="${ENFORCER_HOME}/conf/log4j2.properties" -cp "lib/*" org.wso2.micro.gateway.enforcer.grpc.server.AuthServer
+CMD java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005 -Dhttpclient.hostnameVerifier=AllowAll $JAVA_OPTS -Dlog4j.configurationFile="${ENFORCER_HOME}/conf/log4j2.properties" -cp "lib/*" org.wso2.micro.gateway.enforcer.grpc.server.AuthServer
