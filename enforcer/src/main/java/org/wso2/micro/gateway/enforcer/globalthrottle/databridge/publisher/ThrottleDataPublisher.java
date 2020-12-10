@@ -20,7 +20,6 @@ package org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.wso2.carbon.databridge.commons.exception.TransportException;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.DataPublisher;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.exception.DataEndpointAuthenticationException;
@@ -44,15 +43,13 @@ import java.util.concurrent.TimeUnit;
 public class ThrottleDataPublisher {
     public static ThrottleDataPublisherPool dataPublisherPool;
 
-    public static final Logger LOG = LogManager.getLogger(ThrottleDataPublisher.class);
+    private static final Logger LOG = LogManager.getLogger(ThrottleDataPublisher.class);
+    private static volatile DataPublisher dataPublisher = null;
+    private Executor executor;
 
     public static DataPublisher getDataPublisher() {
         return dataPublisher;
     }
-
-    private static volatile DataPublisher dataPublisher = null;
-
-    Executor executor;
 
     /**
      * This method will initialize throttle data publisher. Inside this we will start executor and initialize data
@@ -74,23 +71,13 @@ public class ThrottleDataPublisher {
                     publisherConfiguration.getAuthUrlGroup(), publisherConfiguration.getUserName(),
                     publisherConfiguration.getPassword());
 
-        } catch (DataEndpointException e) {
-            LOG.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
-                    e.getMessage(), e);
-        } catch (DataEndpointConfigurationException e) {
-            LOG.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
-                    e.getMessage(), e);
-        } catch (DataEndpointAuthenticationException e) {
-            LOG.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
-                    e.getMessage(), e);
-        } catch (TransportException e) {
+        } catch (DataEndpointException | DataEndpointConfigurationException | DataEndpointAuthenticationException
+                | TransportException e) {
             LOG.error("Error in initializing binary data-publisher to send requests to global throttling engine " +
                     e.getMessage(), e);
         }
     }
 
-    //todo: test the api manager in jmeter scenario
-    //todo: test the number of records printed in the log.
     /**
      * This method used to pass message context and let it run within separate thread.
      */

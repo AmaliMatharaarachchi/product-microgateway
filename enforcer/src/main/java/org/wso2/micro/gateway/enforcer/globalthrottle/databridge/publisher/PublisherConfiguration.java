@@ -31,7 +31,6 @@ public class PublisherConfiguration {
 
     private int maxIdleDataPublishingAgents;
     private int initIdleObjectDataPublishingAgents;
-
     private int publisherThreadPoolCoreSize;
     private int publisherThreadPoolMaximumSize;
     private int publisherThreadPoolKeepAliveTime;
@@ -41,7 +40,45 @@ public class PublisherConfiguration {
     private String userName;
     private char[] password;
 
+    private static PublisherConfiguration instance = new PublisherConfiguration();
+
     private PublisherConfiguration() {
+    }
+
+    public void setMaxIdleDataPublishingAgents(int maxIdleDataPublishingAgents) {
+        this.maxIdleDataPublishingAgents = maxIdleDataPublishingAgents;
+    }
+
+    public void setInitIdleObjectDataPublishingAgents(int initIdleObjectDataPublishingAgents) {
+        this.initIdleObjectDataPublishingAgents = initIdleObjectDataPublishingAgents;
+    }
+
+    public void setPublisherThreadPoolCoreSize(int publisherThreadPoolCoreSize) {
+        this.publisherThreadPoolCoreSize = publisherThreadPoolCoreSize;
+    }
+
+    public void setPublisherThreadPoolMaximumSize(int publisherThreadPoolMaximumSize) {
+        this.publisherThreadPoolMaximumSize = publisherThreadPoolMaximumSize;
+    }
+
+    public void setPublisherThreadPoolKeepAliveTime(int publisherThreadPoolKeepAliveTime) {
+        this.publisherThreadPoolKeepAliveTime = publisherThreadPoolKeepAliveTime;
+    }
+
+    public void setAuthUrlGroup(String authUrlGroup) {
+        this.authUrlGroup = authUrlGroup;
+    }
+
+    public void setReceiverUrlGroup(String receiverUrlGroup) {
+        this.receiverUrlGroup = receiverUrlGroup;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password.toCharArray();
     }
 
     public int getMaxIdleDataPublishingAgents() {
@@ -80,12 +117,12 @@ public class PublisherConfiguration {
         return String.valueOf(password);
     }
 
-    private static class InnerPublisherConfiguration {
-        private static final PublisherConfiguration instance = new PublisherConfiguration();
+    public static PublisherConfiguration getInstance() {
+        return instance;
     }
 
-    public static PublisherConfiguration getInstance() {
-        return InnerPublisherConfiguration.instance;
+    public synchronized static void setInstance(PublisherConfiguration publisherConfiguration) {
+        instance = publisherConfiguration;
     }
 
     public void setConfiguration(Map<String, Object> publisherConfiguration) {

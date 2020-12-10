@@ -23,12 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.enforcer.constants.ConfigConstants;
-import org.wso2.micro.gateway.enforcer.constants.ConfigDefaultValues;
 import org.wso2.micro.gateway.enforcer.dto.EventHubConfigurationDto;
 import org.wso2.micro.gateway.enforcer.dto.JWKSConfigurationDTO;
 import org.wso2.micro.gateway.enforcer.dto.TokenIssuerDto;
-import org.wso2.micro.gateway.enforcer.dto.throttleConfigDTOs.TMBinaryAgentConfigDTO;
 import org.wso2.micro.gateway.enforcer.exception.MGWException;
+import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.AgentConfiguration;
+import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.DataPublisherConstants;
+import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.PublisherConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,12 +57,12 @@ public class MGWConfiguration {
     private static Map<String, TokenIssuerDto> issuersMap;
     private static EventHubConfigurationDto eventHubConfiguration;
     private static KeyStore trustStore = null;
+    private AgentConfiguration agentConfiguration;
+    private PublisherConfiguration pubConfiguration;
 
-    public TMBinaryAgentConfigDTO getTmBinaryAgentConfigDTO() {
-        return tmBinaryAgentConfigDTO;
+    public AgentConfiguration getAgentConfiguration() {
+        return agentConfiguration;
     }
-
-    private TMBinaryAgentConfigDTO tmBinaryAgentConfigDTO;
 
     private MGWConfiguration() throws MGWException {
         try {
@@ -96,7 +97,7 @@ public class MGWConfiguration {
         // Set Event Hub related configuration.
         populateEventHubConfiguration();
 
-        populateTMBinaryAgentConfig();
+        populateTMBinaryConfig();
     }
 
     private void populateJWTIssuerConfiguration() throws KeyStoreException {
@@ -140,12 +141,21 @@ public class MGWConfiguration {
         eventHubConfiguration.setEventHubReceiverConfiguration(receiverConfiguration);
     }
 
-    private void populateTMBinaryAgentConfig() {
-        tmBinaryAgentConfigDTO = new TMBinaryAgentConfigDTO();
-        Toml tmconfig = configToml.getTable(ConfigConstants.TM_BINARY_AGENT_THROTTLE_CONF_INSTANCE_ID);
-        tmBinaryAgentConfigDTO = tmconfig.to(TMBinaryAgentConfigDTO.class);
-        tmBinaryAgentConfigDTO.setTrustStorePath(configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION));
-        tmBinaryAgentConfigDTO.setTrustStorePassword(configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD));
+    private void populateTMBinaryConfig() {
+        Toml binaryconfig = configToml.getTable(ConfigConstants.TM_BINARY_THROTTLE_CONF_INSTANCE_ID);
+        Toml agentconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_AGENT_ID);
+        Toml pubconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_PUB_ID);
+        agentConfiguration = agentconfig.to(AgentConfiguration.class);
+        agentConfiguration.setTrustStorePath(configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION));
+        agentConfiguration.setTrustStorePassword(configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD));
+        AgentConfiguration.setInstance(agentConfiguration);
+
+        pubConfiguration = pubconfig.to(PublisherConfiguration.class);
+        pubConfiguration.setUserName(binaryconfig.getString("username"));
+        pubConfiguration.setPassword(binaryconfig.getString("password"));
+        pubConfiguration.setAuthUrlGroup("ssl://192.168.1.102:9711");
+        pubConfiguration.setReceiverUrlGroup("tcp://192.168.1.102:9611");
+        PublisherConfiguration.setInstance(pubConfiguration);
     }
 
     private void loadTrustStore() {

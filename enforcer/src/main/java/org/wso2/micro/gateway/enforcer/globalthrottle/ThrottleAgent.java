@@ -18,6 +18,7 @@
 
 package org.wso2.micro.gateway.enforcer.globalthrottle;
 
+import org.wso2.micro.gateway.enforcer.dto.throttleConfigDTOs.TMBinaryAgentConfigDTO;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.AgentConfiguration;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.PublisherConfiguration;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.ThrottleDataPublisher;
@@ -32,20 +33,19 @@ public class ThrottleAgent {
 
     private static ThrottleDataPublisher throttleDataPublisher = null;
 
-    public static void setTMBinaryAgentConfiguration(Map<String, Object> publisherConfiguration) {
-        AgentConfiguration.getInstance().setConfiguration(publisherConfiguration);
-    }
+//    public static void setTMBinaryAgentConfiguration(TMBinaryAgentConfigDTO publisherConfiguration) {
+//        AgentConfiguration.getInstance().setConfiguration(publisherConfiguration);
+//    }
 
-    public static void setTMBinaryPublisherConfiguration(Map<String, Object> publisherConfiguration) {
-        PublisherConfiguration.getInstance().setConfiguration(publisherConfiguration);
-    }
+//    public static void setTMBinaryPublisherConfiguration(Map<String, Object> publisherConfiguration) {
+//        PublisherConfiguration.getInstance().setConfiguration(publisherConfiguration);
+//    }
 
     public static void startThrottlePublisherPool() {
         throttleDataPublisher = new ThrottleDataPublisher();
     }
 
     public static void publishNonThrottledEvent(Map<String, String> throttleEvent) {
-        System.out.println("amali hkjhhkhkhkk");
         throttleDataPublisher.publishNonThrottledEvent(throttleEvent);
     }
 }

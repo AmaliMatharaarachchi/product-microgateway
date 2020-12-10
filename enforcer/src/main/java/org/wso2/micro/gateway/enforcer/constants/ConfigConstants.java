@@ -54,7 +54,9 @@ public class ConfigConstants {
     public static final String MGW_TRUST_STORE_PASSWORD = "truststore.password";
 
     //tm configurations
-    public static final String TM_BINARY_AGENT_THROTTLE_CONF_INSTANCE_ID = "throttlingConfig.binary.agent";
+    public static final String TM_BINARY_THROTTLE_CONF_INSTANCE_ID = "throttlingConfig.binary";
+    public static final String TM_BINARY_AGENT_ID = "agent";
+    public static final String TM_BINARY_PUB_ID = "publisher";
     public static final String TM_BINARY_AGENT_PROTOCOL_VERSIONS = "sslEnabledProtocols";
     public static final String TM_BINARY_AGENT_CIPHERS = "ciphers";
     public static final String TM_AGENT_QUEUE_SIZE = "queueSize";

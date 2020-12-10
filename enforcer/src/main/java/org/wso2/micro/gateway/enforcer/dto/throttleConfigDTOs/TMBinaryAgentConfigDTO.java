@@ -1,6 +1,11 @@
 package org.wso2.micro.gateway.enforcer.dto.throttleConfigDTOs;
 
+import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.util.DataEndpointConstants;
+
+
+//todo amali remove this
 public class TMBinaryAgentConfigDTO {
+    private final String publishingStrategy = DataEndpointConstants.ASYNC_STRATEGY;
     private int queueSize;
     private int batchSize;
     private int corePoolSize;
@@ -18,7 +23,7 @@ public class TMBinaryAgentConfigDTO {
     private int secureMinIdleTimeInPool;
     //the placeholder replacement is handled via the java implementation
     private String trustStorePath;
-    private String trustStorePassword;
+    private char[] trustStorePassword;
     private String sslEnabledProtocols;
     private String ciphers;
 
@@ -150,12 +155,12 @@ public class TMBinaryAgentConfigDTO {
         this.trustStorePath = trustStorePath;
     }
 
-    public String getTrustStorePassword() {
+    public char[] getTrustStorePassword() {
         return trustStorePassword;
     }
 
     public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
+        this.trustStorePassword = trustStorePassword.toCharArray();
     }
 
     public String getSslEnabledProtocols() {

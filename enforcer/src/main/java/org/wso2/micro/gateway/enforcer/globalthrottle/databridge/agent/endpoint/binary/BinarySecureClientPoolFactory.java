@@ -25,6 +25,10 @@ import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.Data
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.exception.DataEndpointException;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.util.SecurityConstants;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -33,11 +37,6 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * This is a Binary Transport secure implementation for AbstractSecureClientPoolFactory to be used by BinaryEndpoint.

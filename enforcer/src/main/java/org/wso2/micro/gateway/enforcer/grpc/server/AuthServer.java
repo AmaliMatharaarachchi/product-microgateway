@@ -82,12 +82,12 @@ public class AuthServer {
         SubscriptionDataHolder.getInstance().registerTenantSubscriptionStore("carbon.super");
 
         // init global throttling
-        ObjectMapper oMapper = new ObjectMapper();
-        ThrottleAgent.setTMBinaryAgentConfiguration(oMapper.convertValue(mgwConfiguration.getTmBinaryAgentConfigDTO(), Map.class));
-        HashMap<String, Object> pubConfig = new HashMap<>();
-        pubConfig.put(DataPublisherConstants.RECEIVER_URL_GROUP, "tcp://localhost:9611");
-        pubConfig.put(DataPublisherConstants.AUTH_URL_GROUP, "ssl://localhost:9711");
-        ThrottleAgent.setTMBinaryPublisherConfiguration(pubConfig);
+//        ObjectMapper oMapper = new ObjectMapper();
+//        ThrottleAgent.setTMBinaryAgentConfiguration(oMapper.convertValue(mgwConfiguration.getTmBinaryAgentConfigDTO(), Map.class));
+//        ThrottleAgent.setTMBinaryAgentConfiguration(mgwConfiguration.getTmBinaryAgentConfigDTO()));
+//        HashMap<String, Object> pubConfig = new HashMap<>();
+//
+//        ThrottleAgent.setTMBinaryPublisherConfiguration(pubConfig);
         ThrottleAgent.startThrottlePublisherPool();
 
         // Don't exit the main thread. Wait until server is terminated.
