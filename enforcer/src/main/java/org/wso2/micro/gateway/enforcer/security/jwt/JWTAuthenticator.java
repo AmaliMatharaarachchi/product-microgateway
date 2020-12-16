@@ -74,10 +74,10 @@ public class JWTAuthenticator implements Authenticator {
         if (splitToken.length > 1) {
             jwtToken = splitToken[1];
         }
-        String context = requestContext.getMathedAPI().getAPIConfig().getBasePath();
+        String basePath = requestContext.getMathedAPI().getAPIConfig().getBasePath();
         String name = requestContext.getMathedAPI().getAPIConfig().getName();
         String version = requestContext.getMathedAPI().getAPIConfig().getVersion();
-        context = context + "/" + version;
+        String context = FilterUtils.getContext(basePath, version);
         String matchingResource = requestContext.getMatchedResourcePath().getPath();
         String httpMethod = requestContext.getMatchedResourcePath().getMethod().toString();
         SignedJWTInfo signedJWTInfo;
@@ -143,7 +143,7 @@ public class JWTAuthenticator implements Authenticator {
                 //                    endUserToken = generateAndRetrieveJWTToken(jti, jwtInfoDto);
                 //                }
                 return FilterUtils
-                        .generateAuthenticationContext(jti, validationInfo, apiKeyValidationInfoDTO, endUserToken,
+                        .generateAuthenticationContext(requestContext, jti, validationInfo, apiKeyValidationInfoDTO, endUserToken,
                                 true);
             } else {
                 requestContext.getProperties().put("code", "401");

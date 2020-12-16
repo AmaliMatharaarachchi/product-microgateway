@@ -57,12 +57,6 @@ public class MGWConfiguration {
     private static Map<String, TokenIssuerDto> issuersMap;
     private static EventHubConfigurationDto eventHubConfiguration;
     private static KeyStore trustStore = null;
-    private AgentConfiguration agentConfiguration;
-    private PublisherConfiguration pubConfiguration;
-
-    public AgentConfiguration getAgentConfiguration() {
-        return agentConfiguration;
-    }
 
     private MGWConfiguration() throws MGWException {
         try {
@@ -143,14 +137,17 @@ public class MGWConfiguration {
 
     private void populateTMBinaryConfig() {
         Toml binaryconfig = configToml.getTable(ConfigConstants.TM_BINARY_THROTTLE_CONF_INSTANCE_ID);
+        if (binaryconfig.getBoolean("enabled")) {
+
+        }
         Toml agentconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_AGENT_ID);
         Toml pubconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_PUB_ID);
-        agentConfiguration = agentconfig.to(AgentConfiguration.class);
+        AgentConfiguration agentConfiguration = agentconfig.to(AgentConfiguration.class);
         agentConfiguration.setTrustStorePath(configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION));
         agentConfiguration.setTrustStorePassword(configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD));
         AgentConfiguration.setInstance(agentConfiguration);
 
-        pubConfiguration = pubconfig.to(PublisherConfiguration.class);
+        PublisherConfiguration pubConfiguration = pubconfig.to(PublisherConfiguration.class);
         pubConfiguration.setUserName(binaryconfig.getString("username"));
         pubConfiguration.setPassword(binaryconfig.getString("password"));
         pubConfiguration.setAuthUrlGroup("ssl://192.168.1.102:9711");

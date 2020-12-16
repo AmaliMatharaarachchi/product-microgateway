@@ -23,6 +23,8 @@ package org.wso2.micro.gateway.enforcer.constants;
 public class APIConstants {
 
     public static final String UNLIMITED_TIER = "Unlimited";
+    public static final String IP = "ip";
+    public static final String IPv6 = "ipv6";
 
     //open API extensions
     public static final String X_WSO2_BASE_PATH = "x-wso2-basepath";

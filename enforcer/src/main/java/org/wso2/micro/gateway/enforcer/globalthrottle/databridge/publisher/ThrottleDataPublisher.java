@@ -87,20 +87,16 @@ public class ThrottleDataPublisher {
                 DataProcessAndPublishingAgent agent = dataPublisherPool.get();
                 agent.setDataReference(throttleEvent);
                 if (LOG.isDebugEnabled()) {
-                    String messageId = throttleEvent.containsKey(ThrottleEventConstants.MESSAGE_ID) ?
-                            throttleEvent.get(ThrottleEventConstants.MESSAGE_ID) : "null";
-                    String apiContext = throttleEvent.containsKey(ThrottleEventConstants.API_CONTEXT) ?
-                            throttleEvent.get(ThrottleEventConstants.API_CONTEXT) : "null";
+                    String messageId = throttleEvent.getOrDefault(ThrottleEventConstants.MESSAGE_ID, "null");
+                    String apiContext = throttleEvent.getOrDefault(ThrottleEventConstants.API_CONTEXT, "null");
                     LOG.debug("Publishing throttle data from gateway to traffic-manager for: " + apiContext
                             + " with ID: " + messageId + " started" + " at "
                             + new SimpleDateFormat("[yyyy.MM.dd HH:mm:ss,SSS zzz]").format(new Date()));
                 }
                 executor.execute(agent);
                 if (LOG.isDebugEnabled()) {
-                    String messageId = throttleEvent.containsKey(ThrottleEventConstants.MESSAGE_ID) ?
-                            throttleEvent.get(ThrottleEventConstants.MESSAGE_ID) : "null";
-                    String apiContext = throttleEvent.containsKey(ThrottleEventConstants.API_CONTEXT) ?
-                            throttleEvent.get(ThrottleEventConstants.API_CONTEXT) : "null";
+                    String messageId = throttleEvent.getOrDefault(ThrottleEventConstants.MESSAGE_ID, "null");
+                    String apiContext = throttleEvent.getOrDefault(ThrottleEventConstants.API_CONTEXT, "null");
                     LOG.debug("Publishing throttle data from gateway to traffic-manager for: " + apiContext
                             + " with ID: " + messageId + " ended" + " at "
                             + new SimpleDateFormat("[yyyy.MM.dd HH:mm:ss,SSS zzz]").format(new Date()));

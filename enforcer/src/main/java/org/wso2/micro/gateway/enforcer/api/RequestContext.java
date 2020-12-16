@@ -18,6 +18,7 @@
 package org.wso2.micro.gateway.enforcer.api;
 
 import org.wso2.micro.gateway.enforcer.api.config.ResourceConfig;
+import org.wso2.micro.gateway.enforcer.security.AuthenticationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,10 @@ public class RequestContext {
     private ResourceConfig matchedResourcePath;
     private Map<String, String> headers;
     private Map<String, Object> properties = new HashMap();
+    private AuthenticationContext authenticationContext = new AuthenticationContext();
+    private String requestID;
+    private String address;
+    private boolean ipv4Compat;
 
     private RequestContext() {
 
@@ -49,6 +54,10 @@ public class RequestContext {
         private ResourceConfig matchedResourceConfig;
         private Map<String, String> headers;
         private Map<String, Object> properties = new HashMap();
+        private AuthenticationContext authenticationContext = new AuthenticationContext();
+        private String requestID;
+        private String address;
+        private boolean ipv4Compat;
 
         public Builder(String requestPath) {
             this.requestPath = requestPath;
@@ -74,6 +83,26 @@ public class RequestContext {
             return this;
         }
 
+        public Builder authenticationContext(AuthenticationContext authenticationContext) {
+            this.authenticationContext = authenticationContext;
+            return this;
+        }
+
+        public Builder requestID(String requestID) {
+            this.requestID = requestID;
+            return this;
+        }
+
+        public Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Builder ipv4Compat(boolean ipv4Compat) {
+            this.ipv4Compat = ipv4Compat;
+            return this;
+        }
+
         public RequestContext build() {
             RequestContext requestContext = new RequestContext();
             requestContext.matchedResourcePath = this.matchedResourceConfig;
@@ -82,8 +111,24 @@ public class RequestContext {
             requestContext.requestPath = this.requestPath;
             requestContext.headers = this.headers;
             requestContext.properties = this.properties;
+            requestContext.authenticationContext = this.authenticationContext;
+            requestContext.requestID = this.requestID;
+            requestContext.address = this.address;
+            requestContext.ipv4Compat = this.ipv4Compat;
             return requestContext;
         }
+    }
+
+    public AuthenticationContext getAuthenticationContext() {
+        return authenticationContext;
+    }
+
+    public String getRequestID() {
+        return requestID;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public API getMathedAPI() {

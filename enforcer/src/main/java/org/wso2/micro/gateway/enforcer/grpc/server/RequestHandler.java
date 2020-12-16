@@ -17,6 +17,8 @@
  */
 package org.wso2.micro.gateway.enforcer.grpc.server;
 
+import io.envoyproxy.envoy.api.v2.core.Address;
+import io.envoyproxy.envoy.api.v2.core.SocketAddress;
 import io.envoyproxy.envoy.service.auth.v2.CheckRequest;
 import io.envoyproxy.envoy.service.auth.v2.CheckResponse;
 import io.grpc.stub.StreamObserver;
@@ -26,7 +28,9 @@ import org.wso2.micro.gateway.enforcer.api.RequestContext;
 import org.wso2.micro.gateway.enforcer.api.ResponseObject;
 import org.wso2.micro.gateway.enforcer.api.config.ResourceConfig;
 import org.wso2.micro.gateway.enforcer.constants.APIConstants;
+import org.wso2.micro.gateway.enforcer.util.FilterUtils;
 
+import java.net.*;
 import java.util.Map;
 
 /**
@@ -46,9 +50,17 @@ public class RequestHandler {
         String method = request.getAttributes().getRequest().getHttp().getMethod();
         Map<String, String> headers = request.getAttributes().getRequest().getHttp().getHeadersMap();
         String res = request.getAttributes().getContextExtensionsMap().get(APIConstants.GW_RES_PATH_PARAM);
+        String requestID = request.getAttributes().getRequest().getHttp().getId();
+        String address = "";
+        boolean ipv4Compat = false;
+        if (request.getAttributes().getSource().hasAddress() &&
+                request.getAttributes().getSource().getAddress().hasSocketAddress()) {
+            address = request.getAttributes().getSource().getAddress().getSocketAddress().getAddress();
+            ipv4Compat = request.getAttributes().getSource().getAddress().getSocketAddress().getIpv4Compat();
+        }
 
         ResourceConfig resourceConfig = APIFactory.getInstance().getMatchedResource(api, res, method);
         return new RequestContext.Builder(requestPath).matchedResourceConfig(resourceConfig).requestMethod(method)
-                .matchedAPI(api).headers(headers).build();
+                .matchedAPI(api).headers(headers).requestID(requestID).address(address).ipv4Compat(ipv4Compat).build();
     }
 }
