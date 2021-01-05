@@ -18,8 +18,6 @@
 
 package org.wso2.micro.gateway.enforcer.globalthrottle;
 
-import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.AgentConfiguration;
-import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.PublisherConfiguration;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.ThrottleDataPublisher;
 
 import java.util.Map;

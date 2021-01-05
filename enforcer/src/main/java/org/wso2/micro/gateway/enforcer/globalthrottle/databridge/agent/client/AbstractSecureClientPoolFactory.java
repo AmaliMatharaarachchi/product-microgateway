@@ -17,25 +17,20 @@
  */
 package org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.client;
 
+import java.security.KeyStore;
+
 /**
  * This abstract class needs to be implemented to handling secure communication with the endpoint.
  */
 public abstract class AbstractSecureClientPoolFactory extends AbstractClientPoolFactory {
 
-    private String trustStorePassword;
+    private KeyStore trustStore;
 
-    private String trustStore;
-
-    public AbstractSecureClientPoolFactory(String trustStore, String trustStorePassword) {
+    public AbstractSecureClientPoolFactory(KeyStore trustStore) {
         this.trustStore = trustStore;
-        this.trustStorePassword = trustStorePassword;
     }
 
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
-
-    public String getTrustStore() {
+    public KeyStore getTrustStore() {
         return trustStore;
     }
 }

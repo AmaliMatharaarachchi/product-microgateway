@@ -25,10 +25,11 @@ import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.enforcer.constants.ConfigConstants;
 import org.wso2.micro.gateway.enforcer.dto.EventHubConfigurationDto;
 import org.wso2.micro.gateway.enforcer.dto.JWKSConfigurationDTO;
+import org.wso2.micro.gateway.enforcer.dto.ThrottleAgentConfigDTO;
+import org.wso2.micro.gateway.enforcer.dto.ThrottleURLGroupDTO;
 import org.wso2.micro.gateway.enforcer.dto.TokenIssuerDto;
 import org.wso2.micro.gateway.enforcer.exception.MGWException;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.AgentConfiguration;
-import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.DataPublisherConstants;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.publisher.PublisherConfiguration;
 
 import java.io.File;
@@ -57,6 +58,12 @@ public class MGWConfiguration {
     private static Map<String, TokenIssuerDto> issuersMap;
     private static EventHubConfigurationDto eventHubConfiguration;
     private static KeyStore trustStore = null;
+
+    public ThrottleAgentConfigDTO getThrottleAgentConfig() {
+        return throttleAgentConfig;
+    }
+
+    private ThrottleAgentConfigDTO throttleAgentConfig;
 
     private MGWConfiguration() throws MGWException {
         try {
@@ -136,22 +143,17 @@ public class MGWConfiguration {
     }
 
     private void populateTMBinaryConfig() {
-        Toml binaryconfig = configToml.getTable(ConfigConstants.TM_BINARY_THROTTLE_CONF_INSTANCE_ID);
-        if (binaryconfig.getBoolean("enabled")) {
-
-        }
-        Toml agentconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_AGENT_ID);
-        Toml pubconfig = binaryconfig.getTable(ConfigConstants.TM_BINARY_PUB_ID);
-        AgentConfiguration agentConfiguration = agentconfig.to(AgentConfiguration.class);
-        agentConfiguration.setTrustStorePath(configToml.getString(ConfigConstants.MGW_TRUST_STORE_LOCATION));
-        agentConfiguration.setTrustStorePassword(configToml.getString(ConfigConstants.MGW_TRUST_STORE_PASSWORD));
+        throttleAgentConfig =
+                configToml.getTable(ConfigConstants.TM_BINARY_THROTTLE_CONF_INSTANCE_ID)
+                        .to(ThrottleAgentConfigDTO.class);
+        AgentConfiguration agentConfiguration = throttleAgentConfig.getAgent();
+        agentConfiguration.setTrustStore(trustStore);
         AgentConfiguration.setInstance(agentConfiguration);
 
-        PublisherConfiguration pubConfiguration = pubconfig.to(PublisherConfiguration.class);
-        pubConfiguration.setUserName(binaryconfig.getString("username"));
-        pubConfiguration.setPassword(binaryconfig.getString("password"));
-        pubConfiguration.setAuthUrlGroup("ssl://192.168.1.102:9711");
-        pubConfiguration.setReceiverUrlGroup("tcp://192.168.1.102:9611");
+        PublisherConfiguration pubConfiguration = throttleAgentConfig.getPublisher();
+        pubConfiguration.setUserName(throttleAgentConfig.getUsername());
+        pubConfiguration.setPassword(throttleAgentConfig.getPassword());
+        processTMPublisherURLGroup(throttleAgentConfig.getUrlGroup(), pubConfiguration);
         PublisherConfiguration.setInstance(pubConfiguration);
     }
 
@@ -186,5 +188,60 @@ public class MGWConfiguration {
 
     public KeyStore getTrustStore() {
         return trustStore;
+    }
+
+    /**
+     * The receiverURLGroup and the authURLGroup is preprocessed
+     * such that to make them compatible with the binary agent.
+     */
+    private void processTMPublisherURLGroup(List<ThrottleURLGroupDTO> urlGroups,
+                                            PublisherConfiguration pubConfiguration) {
+        StringBuilder restructuredReceiverURL = new StringBuilder();
+        StringBuilder restructuredAuthURL = new StringBuilder();
+
+        for (ThrottleURLGroupDTO urlGroup : urlGroups) {
+            String[] receiverUrls = urlGroup.getReceiverURLs();
+            String[] authUrls = urlGroup.getAuthURLs();
+            if (receiverUrls.length == 1 && authUrls.length == 1) {
+                restructuredReceiverURL.append("{").append(receiverUrls[0]).append("},");
+                restructuredAuthURL.append("{").append(authUrls[0]).append("},");
+                continue;
+            }
+            String urlType = urlGroup.getType();
+            if (urlType == null || urlType.isBlank() || !(ConfigConstants.LOADBALANCE.equalsIgnoreCase(urlType)
+                    || ConfigConstants.FAILOVER.equalsIgnoreCase(urlType))) {
+                logger.warn("Type is not "
+                        + ConfigConstants.LOADBALANCE + " or " + ConfigConstants.FAILOVER + ". Hence proceeding as a "
+                        + ConfigConstants.FAILOVER + " configuration.");
+                urlType = ConfigConstants.FAILOVER;
+            }
+            restructuredReceiverURL.append(processSingleURLGroup(receiverUrls, urlType)).append(",");
+            restructuredAuthURL.append(processSingleURLGroup(authUrls, urlType)).append(",");
+
+        }
+        //to remove the final ',' in the URLs and set to publisher config
+        if (!restructuredReceiverURL.toString().isBlank() && !restructuredAuthURL.toString().isBlank()) {
+            pubConfiguration.setReceiverUrlGroup(restructuredReceiverURL.substring(0,
+                    restructuredReceiverURL.length() - 1));
+            pubConfiguration.setAuthUrlGroup(restructuredAuthURL.substring(0, restructuredAuthURL.length() - 1));
+        }
+    }
+
+
+    private String processSingleURLGroup(String[] urlArray, String urlType) {
+        StringBuilder concatenatedURLString = new StringBuilder("{");
+        for (String url : urlArray) {
+            if (ConfigConstants.LOADBALANCE.equalsIgnoreCase(urlType)) {
+                concatenatedURLString.append(url).append(ConfigConstants.TM_BINARY_LOADBALANCE_SEPARATOR);
+            } else if (ConfigConstants.FAILOVER.equalsIgnoreCase(urlType)) {
+                concatenatedURLString.append(url).append(ConfigConstants.TM_BINARY_FAILOVER_SEPARATOR);
+            } else {
+                concatenatedURLString.append(url).append(ConfigConstants.TM_BINARY_FAILOVER_SEPARATOR);
+            }
+        }
+        //to remove the trailing '|' or ','
+        concatenatedURLString = new StringBuilder(
+                concatenatedURLString.substring(0, concatenatedURLString.length() - 1) + "}");
+        return concatenatedURLString.toString();
     }
 }

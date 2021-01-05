@@ -76,7 +76,10 @@ public class AuthServer {
         //TODO: Get the tenant domain from config
         SubscriptionDataHolder.getInstance().registerTenantSubscriptionStore("carbon.super");
 
-        ThrottleAgent.startThrottlePublisherPool();
+        // Start throttle publisher
+        if (mgwConfiguration.getThrottleAgentConfig().isEnabled()) {
+            ThrottleAgent.startThrottlePublisherPool();
+        }
 
         // Don't exit the main thread. Wait until server is terminated.
         server.awaitTermination();

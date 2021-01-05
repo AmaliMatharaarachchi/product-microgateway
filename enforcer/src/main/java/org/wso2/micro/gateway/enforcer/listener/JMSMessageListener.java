@@ -20,17 +20,29 @@ package org.wso2.micro.gateway.enforcer.listener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.micro.gateway.enforcer.constants.APIConstants;
-import org.wso2.micro.gateway.enforcer.constants.ConfigConstants;
 
-import javax.jms.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Topic;
+import javax.jms.TopicConnection;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+import javax.jms.TopicSubscriber;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/**
+ * JWS listener for throttle data retrieval.
+ */
 public class JMSMessageListener implements MessageListener {
 
     private static final Log log = LogFactory.getLog(JMSMessageListener.class);
@@ -89,8 +101,8 @@ public class JMSMessageListener implements MessageListener {
                         String key = (String) enumeration.nextElement();
                         map.put(key, mapMessage.getObject(key));
                     }
-                    log.info("topic message : "+map.toString());
-                    if (APIConstants.TopicNames.TOPIC_THROTTLE_DATA.equalsIgnoreCase(jmsDestination.getTopicName())) {
+                    log.info("topic message : " + map.toString());
+//                    if (APIConstants.TopicNames.TOPIC_THROTTLE_DATA.equalsIgnoreCase(jmsDestination.getTopicName())) {
 //                        if (map.get(APIConstants.THROTTLE_KEY) != null) {
 //                            /*
 //                             * This message contains throttle data in map which contains Keys
@@ -116,7 +128,7 @@ public class JMSMessageListener implements MessageListener {
 //                             */
 //                            handleKeyTemplateMessage(map);
 //                        }
-                    }
+//                    }
                 } else {
                     log.warn("Event dropped due to unsupported message type " + message.getClass());
                 }
@@ -186,7 +198,8 @@ public class JMSMessageListener implements MessageListener {
 //    private synchronized void handleBlockingMessage(Map<String, Object> map) {
 //
 //        if (log.isDebugEnabled()) {
-//            log.debug("Received Key -  blockingCondition : " + map.get(APIConstants.BLOCKING_CONDITION_KEY).toString() +
+//            log.debug("Received Key -  blockingCondition : " + map.get(APIConstants.BLOCKING_CONDITION_KEY).toString()
+//            +
 //                    " , " +
 //                    "conditionValue :" + map.get(APIConstants.BLOCKING_CONDITION_VALUE).toString() + " , " +
 //                    "tenantDomain : " + map.get(APIConstants.BLOCKING_CONDITION_DOMAIN));
@@ -229,7 +242,8 @@ public class JMSMessageListener implements MessageListener {
 //                ServiceReferenceHolder.getInstance().getAPIThrottleDataService()
 //                        .addIpBlockingCondition(tenantDomain, conditionId, conditionValue, condition);
 //            } else {
-//                ServiceReferenceHolder.getInstance().getAPIThrottleDataService().removeIpBlockingCondition(tenantDomain,
+//                ServiceReferenceHolder.getInstance().getAPIThrottleDataService()
+//                .removeIpBlockingCondition(tenantDomain,
 //                        conditionId);
 //            }
 //        } else if (APIConstants.BLOCKING_CONDITIONS_SUBSCRIPTION.equals(condition)) {

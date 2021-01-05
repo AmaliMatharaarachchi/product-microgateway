@@ -17,26 +17,24 @@
  */
 package org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.endpoint.binary;
 
+import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.AgentHolder;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.client.AbstractSecureClientPoolFactory;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf.DataEndpointConfiguration;
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.exception.DataEndpointException;
-import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.util.SecurityConstants;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * This is a Binary Transport secure implementation for AbstractSecureClientPoolFactory to be used by BinaryEndpoint.
@@ -45,8 +43,8 @@ public class BinarySecureClientPoolFactory extends AbstractSecureClientPoolFacto
     private static final Logger log = LogManager.getLogger(BinarySecureClientPoolFactory.class);
     private static SSLSocketFactory sslSocketFactory;
 
-    public BinarySecureClientPoolFactory(String trustStore, String trustStorePassword) {
-        super(trustStore, trustStorePassword);
+    public BinarySecureClientPoolFactory(KeyStore trustStore) {
+        super(trustStore);
         SSLContext ctx;
         try {
             ctx = createSSLContext();
@@ -113,22 +111,13 @@ public class BinarySecureClientPoolFactory extends AbstractSecureClientPoolFacto
     }
 
     private SSLContext createSSLContext() throws DataEndpointException {
-        FileInputStream fileInputStream;
         SSLContext ctx;
         try {
-            ctx = SSLContext.getInstance(SecurityConstants.SSLCONTEXT_ALGORITHM);
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(SecurityConstants.TMF_ALGORITHM);
-            KeyStore keyStore = KeyStore.getInstance(SecurityConstants.KEYSTORE_TYPE);
-            fileInputStream = new FileInputStream(this.getTrustStore());
-            keyStore.load(fileInputStream, this.getTrustStorePassword() != null ?
-                    this.getTrustStorePassword().toCharArray() : null);
-            trustManagerFactory.init(keyStore);
-            ctx.init(null, trustManagerFactory.getTrustManagers(), null);
+            KeyStore trustStore = getTrustStore();
+            ctx = SSLContexts.custom().loadTrustMaterial(trustStore).build();
             return ctx;
-        } catch (NoSuchAlgorithmException | CertificateException | IOException | KeyManagementException |
-                KeyStoreException e) {
-            throw new DataEndpointException("Error while creating the SSLContext with instance type : TLS." +
-                    e.getMessage(), e);
+        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
+            throw new DataEndpointException("Error while creating the SSLContext with instance type : TLS.", e);
         }
     }
 }

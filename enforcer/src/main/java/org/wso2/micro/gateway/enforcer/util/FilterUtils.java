@@ -88,7 +88,7 @@ public class FilterUtils {
     }
 
     /**
-     * Return a http client instance
+     * Return a http client instance.
      *
      * @param protocol - service endpoint protocol http/https
      * @return
@@ -115,7 +115,7 @@ public class FilterUtils {
     }
 
     /**
-     * Return a PoolingHttpClientConnectionManager instance
+     * Return a PoolingHttpClientConnectionManager instance.
      *
      * @param protocol- service endpoint protocol. It can be http/https
      * @return PoolManager
@@ -186,8 +186,10 @@ public class FilterUtils {
         return basePath + ":" + version;
     }
 
-    public static AuthenticationContext generateAuthenticationContext(RequestContext requestContext, String jti, JWTValidationInfo jwtValidationInfo,
-                                                                      APIKeyValidationInfoDTO apiKeyValidationInfoDTO, String endUserToken, boolean isOauth) {
+    public static AuthenticationContext generateAuthenticationContext(RequestContext requestContext, String jti,
+                                                                      JWTValidationInfo jwtValidationInfo,
+                                                                      APIKeyValidationInfoDTO apiKeyValidationInfoDTO,
+                                                                      String endUserToken, boolean isOauth) {
 
         AuthenticationContext authContext = requestContext.getAuthenticationContext();
         authContext.setAuthenticated(true);

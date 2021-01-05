@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class holds tenant wise subscription data stores
+ * This class holds tenant wise subscription data stores.
  */
 public class SubscriptionDataHolder {
 

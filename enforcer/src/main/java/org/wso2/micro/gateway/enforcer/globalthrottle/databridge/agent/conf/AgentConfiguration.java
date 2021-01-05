@@ -20,11 +20,15 @@ package org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.conf;
 
 import org.wso2.micro.gateway.enforcer.globalthrottle.databridge.agent.util.DataEndpointConstants;
 
+import java.security.KeyStore;
+
+/**
+ * Agent configurations for throttle publisher.
+ */
 public class AgentConfiguration {
 
     private final String publishingStrategy = DataEndpointConstants.ASYNC_STRATEGY;
-    private String trustStorePath;
-    private char[] trustStorePassword;
+    private KeyStore trustStore;
     private int queueSize;
     private int batchSize;
     private int corePoolSize;
@@ -168,20 +172,12 @@ public class AgentConfiguration {
         this.secureMinIdleTimeInPool = secureMinIdleTimeInPool;
     }
 
-    public String getTrustStorePath() {
-        return trustStorePath;
+    public KeyStore getTrustStore() {
+        return trustStore;
     }
 
-    public void setTrustStorePath(String trustStorePath) {
-        this.trustStorePath = trustStorePath;
-    }
-
-    public String getTrustStorePassword() {
-        return String.valueOf(trustStorePassword);
-    }
-
-    public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword.toCharArray();
+    public void setTrustStore(KeyStore trustStore) {
+        this.trustStore = trustStore;
     }
 
     public String getSslEnabledProtocols() {
@@ -207,8 +203,6 @@ public class AgentConfiguration {
     @Override
     public String toString() {
         return ", PublishingStrategy : " + publishingStrategy +
-                "TrustSorePath" + trustStorePath +
-                "TrustSorePassword" + trustStorePassword +
                 "QueueSize" + queueSize +
                 "BatchSize" + batchSize +
                 "CorePoolSize" + corePoolSize +
@@ -232,7 +226,7 @@ public class AgentConfiguration {
         return instance;
     }
 
-    public synchronized static void setInstance(AgentConfiguration agentConfiguration) {
+    public static synchronized void setInstance(AgentConfiguration agentConfiguration) {
         instance = agentConfiguration;
     }
 }

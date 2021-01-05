@@ -61,8 +61,8 @@ password = "wso2carbon"
  password = "admin"
  # Receiver URL and the authentication URL of the Traffic manager node/nodes
  [[filter.throttlingConfig.binary.URLGroup]]
-   receiverURL = "tcp://localhost:9611"
-   authURL = "ssl://192.168.1.102:9711"
+   receiverURLs = ["tcp://localhost:9611"]
+   authURLs = ["ssl://192.168.1.102:9711"]
  # Data publisher object pool configurations
  [filter.throttlingConfig.binary.publisher]
    maxIdleDataPublishingAgents = 1000

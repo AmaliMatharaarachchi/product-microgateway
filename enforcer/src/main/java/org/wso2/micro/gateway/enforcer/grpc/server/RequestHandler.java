@@ -17,8 +17,6 @@
  */
 package org.wso2.micro.gateway.enforcer.grpc.server;
 
-import io.envoyproxy.envoy.api.v2.core.Address;
-import io.envoyproxy.envoy.api.v2.core.SocketAddress;
 import io.envoyproxy.envoy.service.auth.v2.CheckRequest;
 import io.envoyproxy.envoy.service.auth.v2.CheckResponse;
 import io.grpc.stub.StreamObserver;
@@ -28,9 +26,7 @@ import org.wso2.micro.gateway.enforcer.api.RequestContext;
 import org.wso2.micro.gateway.enforcer.api.ResponseObject;
 import org.wso2.micro.gateway.enforcer.api.config.ResourceConfig;
 import org.wso2.micro.gateway.enforcer.constants.APIConstants;
-import org.wso2.micro.gateway.enforcer.util.FilterUtils;
 
-import java.net.*;
 import java.util.Map;
 
 /**

@@ -111,7 +111,7 @@ public class JWTAuthenticator implements Authenticator {
                 APIKeyValidationInfoDTO apiKeyValidationInfoDTO = null;
                 MGWConfiguration configuration = ReferenceHolder.getInstance().getMGWConfiguration();
                 TokenIssuerDto issuerDto = configuration.getJWTIssuers().get(validationInfo.getIssuer());
-                  //TODO: enable subscription validation
+                //TODO: enable subscription validation
                 if (issuerDto.isValidateSubscriptions()) {
 
                     JSONObject api = validateSubscriptionFromClaim(name, version, claims, splitToken, true);
@@ -143,8 +143,8 @@ public class JWTAuthenticator implements Authenticator {
                 //                    endUserToken = generateAndRetrieveJWTToken(jti, jwtInfoDto);
                 //                }
                 return FilterUtils
-                        .generateAuthenticationContext(requestContext, jti, validationInfo, apiKeyValidationInfoDTO, endUserToken,
-                                true);
+                        .generateAuthenticationContext(requestContext, jti, validationInfo, apiKeyValidationInfoDTO,
+                                endUserToken, true);
             } else {
                 requestContext.getProperties().put("code", "401");
                 requestContext.getProperties().put("error_code", "900901");
@@ -172,7 +172,8 @@ public class JWTAuthenticator implements Authenticator {
      * @throws APISecurityException in case of scope validation failure
      */
     private void validateScopes(String apiContext, String apiVersion, String matchingResource, String httpMethod,
-            JWTValidationInfo jwtValidationInfo, SignedJWTInfo jwtToken) throws APISecurityException {
+                                JWTValidationInfo jwtValidationInfo, SignedJWTInfo jwtToken)
+            throws APISecurityException {
         try {
             String tenantDomain = "carbon.super"; //TODO : Derive proper tenant domain.
 
@@ -212,7 +213,8 @@ public class JWTAuthenticator implements Authenticator {
     }
 
     private APIKeyValidationInfoDTO validateSubscriptionUsingKeyManager(RequestContext requestContext,
-            JWTValidationInfo jwtValidationInfo) throws APISecurityException {
+                                                                        JWTValidationInfo jwtValidationInfo)
+            throws APISecurityException {
 
         String apiContext = requestContext.getMathedAPI().getAPIConfig().getBasePath();
         String apiVersion = requestContext.getMathedAPI().getAPIConfig().getVersion();
@@ -220,7 +222,8 @@ public class JWTAuthenticator implements Authenticator {
     }
 
     private APIKeyValidationInfoDTO validateSubscriptionUsingKeyManager(String apiContext, String apiVersion,
-            JWTValidationInfo jwtValidationInfo) throws APISecurityException {
+                                                                        JWTValidationInfo jwtValidationInfo)
+            throws APISecurityException {
 
         String tenantDomain = "carbon.super"; //TODO : get correct tenant domain
 
@@ -242,7 +245,7 @@ public class JWTAuthenticator implements Authenticator {
      * Validate whether the user is subscribed to the invoked API. If subscribed, return a JSON object containing
      * the API information. This validation is done based on the jwt token claims.
      *
-     * @param name API name
+     * @param name    API name
      * @param version API version
      * @param payload The payload of the JWT token
      * @return an JSON object containing subscribed API information retrieved from token payload.

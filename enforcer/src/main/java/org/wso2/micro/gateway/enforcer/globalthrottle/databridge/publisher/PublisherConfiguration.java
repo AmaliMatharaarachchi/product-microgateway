@@ -121,7 +121,7 @@ public class PublisherConfiguration {
         return instance;
     }
 
-    public synchronized static void setInstance(PublisherConfiguration publisherConfiguration) {
+    public static synchronized void setInstance(PublisherConfiguration publisherConfiguration) {
         instance = publisherConfiguration;
     }
 

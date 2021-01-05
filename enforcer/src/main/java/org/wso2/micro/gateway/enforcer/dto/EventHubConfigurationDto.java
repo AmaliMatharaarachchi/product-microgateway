@@ -21,7 +21,7 @@ package org.wso2.micro.gateway.enforcer.dto;
 import java.util.Properties;
 
 /**
- * Holds the configurations related to connecting with APIM event hub node
+ * Holds the configurations related to connecting with APIM event hub node.
  */
 public class EventHubConfigurationDto {
     private boolean enabled;

@@ -17,7 +17,6 @@
  */
 package org.wso2.micro.gateway.enforcer.filters;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -35,7 +34,6 @@ import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,7 +71,8 @@ public class ThrottleFilter implements Filter {
         String resourceTier;
         String resourceKey;
 
-        if (!APIConstants.UNLIMITED_TIER.equals(authenticationContext.getApiTier()) && authenticationContext.getApiTier() != null &&
+        if (!APIConstants.UNLIMITED_TIER.equals(authenticationContext.getApiTier()) &&
+                authenticationContext.getApiTier() != null &&
                 !authenticationContext.getApiTier().isBlank()) {
             resourceTier = authenticationContext.getApiTier();
             resourceKey = apiContext;
@@ -84,11 +83,13 @@ public class ThrottleFilter implements Filter {
 
 
         throttleEvent.put(ThrottleEventConstants.MESSAGE_ID, requestContext.getRequestID());
-        throttleEvent.put(ThrottleEventConstants.APP_KEY, authenticationContext.getApplicationId() + ":" + authenticationContext.getUsername());
+        throttleEvent.put(ThrottleEventConstants.APP_KEY, authenticationContext.getApplicationId() + ":" +
+                authenticationContext.getUsername());
         throttleEvent.put(ThrottleEventConstants.APP_TIER, authenticationContext.getApplicationTier());
         throttleEvent.put(ThrottleEventConstants.API_KEY, apiContext);
         throttleEvent.put(ThrottleEventConstants.API_TIER, authenticationContext.getApiTier());
-        throttleEvent.put(ThrottleEventConstants.SUBSCRIPTION_KEY, authenticationContext.getApplicationId() + ":" + apiContext);
+        throttleEvent.put(ThrottleEventConstants.SUBSCRIPTION_KEY, authenticationContext.getApplicationId() + ":" +
+                apiContext);
         throttleEvent.put(ThrottleEventConstants.SUBSCRIPTION_TIER, authenticationContext.getTier());
         throttleEvent.put(ThrottleEventConstants.RESOURCE_KEY, resourceKey);
         throttleEvent.put(ThrottleEventConstants.RESOURCE_TIER, resourceTier);
@@ -108,7 +109,8 @@ public class ThrottleFilter implements Filter {
         if (!apiVersion.isBlank()) {
             resourceLevelThrottleKey += "/" + apiVersion;
         }
-        resourceLevelThrottleKey += requestContext.getMatchedResourcePath().getPath() + ":" + requestContext.getRequestMethod();
+        resourceLevelThrottleKey += requestContext.getMatchedResourcePath().getPath() + ":" +
+                requestContext.getRequestMethod();
         return resourceLevelThrottleKey;
     }
 
@@ -120,7 +122,7 @@ public class ThrottleFilter implements Filter {
     }
 
 
-    private JSONObject getProperties (RequestContext requestContext) {
+    private JSONObject getProperties(RequestContext requestContext) {
         String remoteIP = requestContext.getAddress();
         JSONObject jsonObMap = new JSONObject();
         if (remoteIP != null && remoteIP.length() > 0) {
@@ -128,15 +130,15 @@ public class ThrottleFilter implements Filter {
                 InetAddress address = InetAddress.getByName(remoteIP);
                 if (address instanceof Inet4Address) {
                     jsonObMap.put(APIConstants.IP, FilterUtils.ipToLong(remoteIP));
-                    jsonObMap.put(APIConstants.IPv6, 0);
+                    jsonObMap.put(APIConstants.IPV6, 0);
                 } else if (address instanceof Inet6Address) {
-                    jsonObMap.put(APIConstants.IPv6, FilterUtils.ipToBigInteger(remoteIP));
+                    jsonObMap.put(APIConstants.IPV6, FilterUtils.ipToBigInteger(remoteIP));
                     jsonObMap.put(APIConstants.IP, 0);
                 }
             } catch (UnknownHostException e) {
                 //send empty value as ip
                 log.error("Error while parsing host IP " + remoteIP, e);
-                jsonObMap.put(APIConstants.IPv6, 0);
+                jsonObMap.put(APIConstants.IPV6, 0);
                 jsonObMap.put(APIConstants.IP, 0);
             }
         }

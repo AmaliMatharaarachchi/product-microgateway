@@ -55,7 +55,7 @@ public class DataEndpointAgent {
     private void initialize() {
         AbstractClientPoolFactory clientPoolFactory = new BinaryClientPoolFactory();
         AbstractSecureClientPoolFactory secureClientPoolFactory = new BinarySecureClientPoolFactory(
-                agentConfiguration.getTrustStorePath(), agentConfiguration.getTrustStorePassword());
+                agentConfiguration.getTrustStore());
         ClientPool clientPool = new ClientPool();
         this.transportPool = clientPool.getClientPool(
                 clientPoolFactory,

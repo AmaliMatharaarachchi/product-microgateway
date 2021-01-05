@@ -32,7 +32,7 @@ import org.wso2.micro.gateway.enforcer.models.SubscriptionPolicy;
 public interface SubscriptionDataStore {
 
     /**
-     * Gets an {@link Application} by Id
+     * Gets an {@link Application} by Id.
      *
      * @param appId Id of the Application
      * @return {@link Application} with the appId
@@ -40,7 +40,7 @@ public interface SubscriptionDataStore {
     Application getApplicationById(int appId);
 
     /**
-     * Gets the {@link ApplicationKeyMapping} entry by Key
+     * Gets the {@link ApplicationKeyMapping} entry by Key.
      *
      * @param key <ApplicationIs>.<keyType>
      * @param keyManager Keymanager Name
@@ -49,7 +49,7 @@ public interface SubscriptionDataStore {
     ApplicationKeyMapping getKeyMappingByKeyAndKeyManager(String key, String keyManager);
 
     /**
-     * Get API by Context and Version
+     * Get API by Context and Version.
      *
      * @param context Context of the API
      * @param version Version of the API
@@ -58,7 +58,7 @@ public interface SubscriptionDataStore {
     API getApiByContextAndVersion(String context, String version);
 
     /**
-     * Gets Subscription by ID
+     * Gets Subscription by ID.
      *
      * @param appId Application associated with the Subscription
      * @param apiId Api associated with the Subscription
@@ -67,7 +67,7 @@ public interface SubscriptionDataStore {
     Subscription getSubscriptionById(int appId, int apiId);
 
     /**
-     * Gets API Throttling Policy by the name and Tenant Id
+     * Gets API Throttling Policy by the name and Tenant Id.
      *
      * @param policyName Name of the Throttling Policy
      * @param tenantId   Tenant ID in the Policy
@@ -75,7 +75,7 @@ public interface SubscriptionDataStore {
      */
     ApiPolicy getApiPolicyByName(String policyName, int tenantId);
     /**
-     * Gets Subscription Throttling Policy by the name and Tenant Id
+     * Gets Subscription Throttling Policy by the name and Tenant Id.
      *
      * @param policyName Name of the Throttling Policy
      * @param tenantId   Tenant ID in the Policy
@@ -84,7 +84,7 @@ public interface SubscriptionDataStore {
     SubscriptionPolicy getSubscriptionPolicyByName(String policyName, int tenantId);
 
     /**
-     * Gets Application Throttling Policy by the name and Tenant Id
+     * Gets Application Throttling Policy by the name and Tenant Id.
      *
      * @param policyName Name of the Throttling Policy
      * @param tenantId   Tenant ID in the Policy

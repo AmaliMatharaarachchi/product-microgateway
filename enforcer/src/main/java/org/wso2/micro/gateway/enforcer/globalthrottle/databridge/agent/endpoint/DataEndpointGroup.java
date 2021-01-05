@@ -389,7 +389,7 @@ public class DataEndpointGroup implements DataEndpointFailureCallback {
                 if (dataEndpoint.isConnected()) {
                     isOneReceiverConnected = true;
                 } else {
-                    failedDataEndpoints = failedDataEndpoints + (dataEndpoint.getDataEndpointConfiguration() != null
+                    failedDataEndpoints = (dataEndpoint.getDataEndpointConfiguration() != null
                             ? dataEndpoint.getDataEndpointConfiguration().getReceiverURL() : "Null") + ",";
                 }
             }
