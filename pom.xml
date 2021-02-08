@@ -37,9 +37,9 @@
     </parent>
 
     <scm>
-        <url>https://github.com/wso2/product-microgateway.git</url>
-        <developerConnection>scm:git:https://github.com/wso2/product-microgateway.git</developerConnection>
-        <connection>scm:git:https://github.com/wso2/product-microgateway.git</connection>
+        <url>https://github.com/AmaliMatharaarachchi/product-microgateway.git</url>
+        <developerConnection>scm:git:https://github.com/AmaliMatharaarachchi/product-microgateway.git</developerConnection>
+        <connection>scm:git:https://github.com/AmaliMatharaarachchi/product-microgateway.git</connection>
         <tag>HEAD</tag>
     </scm>
 
@@ -117,9 +117,9 @@
                         </goals>
                         <configuration>
                             <target>
-                                <replaceregexp file="resources/docker-compose.yaml" match="wso2\/mg\-router\:.*" replace="wso2/mg-router:${project.version}" byline="true" />
-                                <replaceregexp file="resources/docker-compose.yaml" match="wso2\/mg\-adapter\:.*" replace="wso2/mg-adapter:${project.version}" byline="true" />
-                                <replaceregexp file="resources/docker-compose.yaml" match="wso2\/mg\-enforcer\:.*" replace="wso2/mg-enforcer:${project.version}" byline="true" />
+                                <replaceregexp file="resources/docker-compose.yaml" match="amalim\/mg\-router\:.*" replace="amalim/mg-router:${project.version}" byline="true" />
+                                <replaceregexp file="resources/docker-compose.yaml" match="amalim\/mg\-adapter\:.*" replace="amalim/mg-adapter:${project.version}" byline="true" />
+                                <replaceregexp file="resources/docker-compose.yaml" match="amalim\/mg\-enforcer\:.*" replace="amalim/mg-enforcer:${project.version}" byline="true" />
                                 <replaceregexp file="remove-containers.sh" match="micro_gw_version=.*" replace="micro_gw_version=${project.version}" byline="true" />
                             </target>
                         </configuration>
