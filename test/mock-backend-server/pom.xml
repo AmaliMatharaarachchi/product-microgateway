@@ -65,7 +65,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>amalim/mg-mock-backend:latest</name>
+                            <name>wso2/mg-mock-backend:latest</name>
                             <build>
                                 <contextDir>${project.basedir}/src/main/resources</contextDir>
                                 <assembly>
