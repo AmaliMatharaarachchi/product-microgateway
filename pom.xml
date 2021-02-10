@@ -132,6 +132,7 @@
                 <configuration>
                     <goals>docker:push</goals>
                     <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
         </plugins>
